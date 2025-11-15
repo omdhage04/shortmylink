@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Account - ShortMyLink.in</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-50">
+  <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg">
+    <div class="flex items-center justify-center mb-6">
+      <div class="w-10 h-10 bg-black text-white text-xl font-bold rounded-full flex items-center justify-center">S</div>
+      <span class="ml-2 text-xl font-semibold text-gray-800">ShortMyLink.in</span>
+    </div>
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Create an account</h2>
+
+    <form id="registerForm" onsubmit="return handleRegister(event)">
+      <input type="text" id="name" required placeholder="Name" class="w-full mb-4 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+      <input type="email" id="email" required placeholder="Email Address" class="w-full mb-4 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+      
+      <div class="flex gap-4 mb-4">
+        <input type="password" id="password" required placeholder="Password" class="w-1/2 px-4 py-3 rounded-lg border border-gray-300" />
+        <input type="password" id="confirmPassword" required placeholder="Confirm Password" class="w-1/2 px-4 py-3 rounded-lg border border-gray-300" />
+      </div>
+
+      <div class="flex gap-2 mb-4">
+        <button type="button" onclick="sendOTP()" class="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg">Send OTP</button>
+        <input type="text" id="otp" required placeholder="Enter OTP" class="w-1/2 px-4 py-2 rounded-lg border border-gray-300" />
+      </div>
+
+      <div class="flex items-center mb-4">
+        <input type="checkbox" id="agree" class="mr-2" required />
+        <label for="agree" class="text-sm text-gray-600">
+          By registering your details, you agree with our 
+          <a href="#" class="text-purple-600 underline">Terms & Conditions</a>, and 
+          <a href="#" class="text-purple-600 underline">Privacy and Cookie Policy</a>.
+        </label>
+      </div>
+
+      <div class="flex gap-4 mb-4">
+        <button type="submit" class="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg">Register</button>
+        <a href="login.html" class="w-1/2 text-center border border-purple-600 text-purple-600 font-semibold py-3 rounded-lg hover:bg-purple-50">Sign In</a>
+      </div>
+
+      <div class="flex justify-center space-x-6 mt-6 text-sm text-gray-500">
+        <a href="#" class="hover:text-purple-600">Facebook</a>
+        <a href="#" class="hover:text-purple-600">Google</a>
+      </div>
+    </form>
+  </div>
+
+<script>
+  async function sendOTP() {
+    const email = document.getElementById("email").value;
+    if (!email) return alert("Please enter your email first.");
+
+    const formData = new FormData();
+    formData.append("email", email);
+
+    const res = await fetch("send-otp.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    alert(data.message || data.error);
+  }
+
+    async function handleRegister(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const otp = document.getElementById("otp").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return false;
+    }
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("otp", otp);
+
+    const res = await fetch("verify-otp.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.redirect) {
+      // ✅ OTP verified — redirect to welcome page
+      window.location.href = data.redirect;
+    } else {
+      alert("❌ " + (data.message || "Invalid OTP"));
+    }
+    return false;
+  }
+
+</script>
+</body>
+</html>
