@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features | ShortMyLink.in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GLOBAL SCALING (Your 90% Preference) --- */
+        html {
+            font-size: 14.4px; 
+        }
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+        }
+
+        /* Lenis & Layout */
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        
+        body { background-color: #f8fafc; overflow-x: hidden; }
+        
+        #smooth-content { will-change: transform; transform-origin: center top; overflow: hidden; }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        /* Code Editor Look */
+        .code-window {
+            background: #0f172a;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255,255,255,0.1);
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #16a34a 0%, #0d9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradient-move 8s ease infinite;
+        }
+
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Icon Glow */
+        .icon-glow {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, #22c55e, #0d9488);
+            transform-origin: 0%; transform: scaleX(0); z-index: 100;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e',
+                            600: '#16a34a', 700: '#15803d', 900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navbar (Consistent with Index) -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='index.html'">
+                    <i class="fa-solid fa-link text-brand-600 text-xl"></i>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">shortmylink<span class="text-brand-600">.in</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="fetures.html" class="text-sm font-bold text-brand-600">Features</a>
+                    <a href="payouts.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Payout Rates</a>
+                    <div class="flex items-center space-x-3 ml-2">
+                        <a href="#" class="text-sm font-semibold text-slate-900 hover:text-brand-600">Login</a>
+                        <a href="#" class="magnetic-btn bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-brand-500/30">Sign Up</a>
+                    </div>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="index.html" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">Home</a>
+                <a href="feature.html" class="block px-3 py-2 text-sm font-bold text-brand-600 bg-brand-50 rounded-md">Features</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Smooth Scroll Wrapper -->
+    <div id="smooth-content">
+
+        <!-- Header Section -->
+        <section class="relative pt-32 pb-20 overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-brand-200 opacity-30 blur-[80px] parallax-blob" data-speed="0.5"></div>
+            <div class="max-w-6xl mx-auto px-4 relative z-10 text-center">
+                <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 reveal-elem">
+                    Tools for <span class="gradient-text">Power Publishers</span>
+                </h1>
+                <p class="text-xl text-slate-500 max-w-2xl mx-auto reveal-elem">
+                    We don't just shorten links. We provide an entire ecosystem to help you maximize your revenue and track your success.
+                </p>
+            </div>
+        </section>
+
+        <!-- Core Features Grid -->
+        <section class="py-10">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-3 gap-6">
+                    
+                    <!-- Card 1: The Wallet -->
+                    <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 feature-card group">
+                        <div class="w-14 h-14 rounded-xl bg-green-50 text-brand-600 flex items-center justify-center text-2xl mb-6 icon-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Daily Payments</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Cash flow matters. Withdraw your earnings daily with a low minimum threshold of just $5.00 via PayPal, Bitcoin, or UPI.
+                        </p>
+                    </div>
+
+                    <!-- Card 2: The Tech -->
+                    <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 feature-card md:mt-8 group">
+                        <div class="w-14 h-14 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6 icon-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Developer API</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Integrate our shortener directly into your applications. Our REST API allows you to shorten links programmatically.
+                        </p>
+                    </div>
+
+                    <!-- Card 3: The Data -->
+                    <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 feature-card group">
+                        <div class="w-14 h-14 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-6 icon-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-chart-simple"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Real-time Analytics</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Visualize your traffic. See exactly which countries your visitors are coming from and which devices they are using.
+                        </p>
+                    </div>
+
+                    <!-- Card 4: Tools -->
+                    <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 feature-card group">
+                        <div class="w-14 h-14 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl mb-6 icon-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Mass Shrinker</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Have a list of URLs? Shorten up to 20 links at once using our bulk tool. Save time and monetize faster.
+                        </p>
+                    </div>
+
+                    <!-- Card 5: Scripts -->
+                    <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 feature-card md:mt-8 group">
+                        <div class="w-14 h-14 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-2xl mb-6 icon-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Full Page Script</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Turn every link on your website into a paid link automatically with a simple copy-paste Javascript snippet.
+                        </p>
+                    </div>
+
+                    <!-- Card 6: Support -->
+                    <div class="glass-card p-8 rounded-2xl hover:-translate-y-2 feature-card group">
+                        <div class="w-14 h-14 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-2xl mb-6 icon-glow group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">24/7 Support</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Questions about payments or integration? Our dedicated support team is always ready to help you optimize earnings.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Integration Showcase (3D Tilt) -->
+        <section class="py-24 bg-slate-900 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-500/10 rounded-full blur-[120px]"></div>
+
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    
+                    <!-- Text Side -->
+                    <div class="gsap-fade-right">
+                        <span class="text-brand-400 font-bold tracking-wider uppercase text-xs mb-4 block">For Developers</span>
+                        <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Integrate in minutes.</h2>
+                        <p class="text-slate-400 text-base leading-relaxed mb-8">
+                            Our API is built for speed and simplicity. Use your API token to generate links on the fly from your mobile app, WordPress site, or custom script.
+                        </p>
+                        <div class="flex gap-4">
+                            <a href="#" class="text-white border border-slate-700 bg-slate-800/50 px-5 py-3 rounded-lg text-sm font-mono hover:bg-brand-600 hover:border-brand-500 transition-all">Documentation <i class="fa-solid fa-arrow-right ml-2 text-xs"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- 3D Code Block -->
+                    <div id="code-tilt-container" class="perspective-1000">
+                        <div id="code-tilt" class="code-window p-6 transition-transform duration-100 ease-out">
+                            <div class="flex items-center gap-2 mb-4 border-b border-slate-700 pb-4">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span class="ml-4 text-xs text-slate-500 font-mono">api-example.js</span>
+                            </div>
+                            <pre class="font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
+<span class="text-purple-400">const</span> response = <span class="text-purple-400">await</span> fetch(<span class="text-green-400">'https://shortmylink.in/api'</span>, {
+  method: <span class="text-green-400">'POST'</span>,
+  headers: {
+    <span class="text-green-400">'Authorization'</span>: <span class="text-yellow-300">'YOUR_API_TOKEN'</span>
+  },
+  body: JSON.stringify({
+    url: <span class="text-green-400">'https://your-long-url.com'</span>
+  })
+});
+
+<span class="text-slate-500">// Response</span>
+<span class="text-purple-400">const</span> data = <span class="text-purple-400">await</span> response.json();
+console.log(data.shortenedUrl); 
+<span class="text-slate-500">// Output: https://shortmylink.in/x9j2M</span>
+</pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-brand-500 py-20 text-center">
+            <div class="max-w-4xl mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Start monetizing now</h2>
+                <p class="text-brand-50 text-lg mb-8">No credit card required. Instant approval.</p>
+                <button class="magnetic-btn px-8 py-3 bg-white text-brand-700 font-bold rounded-lg shadow-lg hover:bg-slate-50 transition-colors">Create Free Account</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-slate-900 text-slate-400 py-12">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-link text-brand-500 text-lg"></i>
+                            <span class="font-bold text-xl text-white">shortmylink<span class="text-brand-500">.in</span></span>
+                        </div>
+                        <p class="text-sm max-w-sm mb-6 leading-relaxed">
+                            The highest paying URL shortener platform. We prioritize our publishers with an 85% revenue share model.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-4 text-sm">Legal</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-brand-500">Terms</a></li>
+                            <li><a href="#" class="hover:text-brand-500">Privacy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-4 text-sm">Contact</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-brand-500">Support</a></li>
+                            <li><a href="#" class="hover:text-brand-500">Twitter</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // 1. Lenis with Velocity Skew (0.02)
+            if (typeof Lenis !== 'undefined') {
+                const lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    direction: 'vertical', 
+                    smooth: true,
+                    mouseMultiplier: 1,
+                });
+
+                lenis.on('scroll', (e) => {
+                    ScrollTrigger.update();
+                    if(e.velocity) {
+                        const skewAmount = e.velocity * 0.02; 
+                        gsap.to('#smooth-content', { skewY: skewAmount, duration: 0.1, ease: "power3.out", overwrite: true });
+                    }
+                });
+
+                lenis.on('scroll', debounce(() => {
+                    gsap.to('#smooth-content', { skewY: 0, duration: 0.4, ease: "power3.out" });
+                }, 100));
+
+                function raf(time) { lenis.raf(time * 1000); }
+                gsap.ticker.add(raf);
+            }
+
+            // 2. GSAP Animations
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Progress Bar
+                gsap.to("#progress-bar", {
+                    scaleX: 1, ease: "none",
+                    scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 0 }
+                });
+
+                // Hero Reveal
+                gsap.from(".reveal-elem", {
+                    y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power3.out"
+                });
+
+                // Feature Cards Stagger
+                gsap.utils.toArray(".feature-card").forEach((card, i) => {
+                    gsap.from(card, {
+                        y: 40, opacity: 0, duration: 0.6, delay: i * 0.05, ease: "power3.out",
+                        scrollTrigger: { trigger: card, start: "top 90%" }
+                    });
+                });
+
+                // Text Fade Right
+                gsap.from(".gsap-fade-right", {
+                    x: -50, opacity: 0, duration: 0.8, ease: "power3.out",
+                    scrollTrigger: { trigger: ".gsap-fade-right", start: "top 80%" }
+                });
+            }
+
+            // 3. 3D Tilt for Code Block
+            const codeCard = document.getElementById('code-tilt');
+            const codeContainer = document.getElementById('code-tilt-container');
+
+            if(codeContainer && codeCard) {
+                codeContainer.addEventListener('mousemove', (e) => {
+                    const rect = codeContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const xRot = -((y - rect.height / 2) / rect.height * 10); 
+                    const yRot = (x - rect.width / 2) / rect.width * 10;
+                    codeCard.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                codeContainer.addEventListener('mouseleave', () => {
+                    codeCard.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                });
+            }
+
+            // 4. Magnetic Buttons
+            const magneticBtns = document.querySelectorAll('.magnetic-btn');
+            magneticBtns.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    gsap.to(btn, { x: x * 0.2, y: y * 0.2, duration: 0.3, ease: "power2.out" });
+                });
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+                });
+            });
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => { clearTimeout(timeout); func(...args); };
+                clearTimeout(timeout); timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // Mobile Menu
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if(menuBtn){
+            menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+        }
+    </script>
+</body>
+</html>
