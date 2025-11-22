@@ -1,31 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" class="light"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShortMyLink.in | Monetize Your Links</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         /* Lenis CSS */
-        html.lenis, html.lenis body {
-            height: auto;
-        }
-        .lenis.lenis-smooth {
-            scroll-behavior: auto !important;
-        }
-        .lenis.lenis-smooth [data-lenis-prevent] {
-            overscroll-behavior: contain;
-        }
-        .lenis.lenis-stopped {
-            overflow: hidden;
-        }
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
         
         body {
-            background-color: #f8fafc;
-            overflow-x: hidden;
+            /* Smooth background transition for elements that don't get the ripple effect */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         
         /* Skew Wrapper */
@@ -35,24 +27,50 @@
             overflow: hidden;
         }
 
-        /* Glass Effect & 3D Card */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
-            transform-style: preserve-3d;
-            transform: perspective(1000px);
+        /* HEAVENLY TRANSITION CSS */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
         }
 
-        /* Animated Gradient Text */
+        /* Dark Mode Specifics */
+        .dark body {
+            background-color: #050505;
+            color: #e5e5e5;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(6, 78, 59, 0.15);
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: background 0.3s ease, border 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Gradient Text */
         .gradient-text {
-            background: linear-gradient(135deg, #16a34a 0%, #0d9488 100%);
+            background: linear-gradient(135deg, #065f46 0%, #10b981 50%, #064e3b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 200% 200%;
-            animation: gradient-move 8s ease infinite;
+            animation: gradient-move 6s ease infinite;
+        }
+        
+        .dark .gradient-text {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #6ee7b7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         @keyframes gradient-move {
@@ -61,34 +79,41 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Scroll Progress Bar */
         .progress-bar {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, #22c55e, #0d9488);
-            transform-origin: 0%;
-            transform: scaleX(0);
-            z-index: 100;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, #10b981, #064e3b);
+            transform-origin: 0%; transform: scaleX(0); z-index: 100;
+        }
+
+        .premium-input:focus {
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
         }
     </style>
     <script>
         tailwind.config = {
+            darkMode: 'class', // Enables class-based dark mode
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
                     },
                     colors: {
                         brand: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            900: '#14532d',
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        gold: {
+                            500: '#eab308',
+                            600: '#ca8a04',
                         }
                     }
                 }
@@ -96,97 +121,114 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+<body class="bg-neutral-50 text-neutral-800 antialiased selection:bg-brand-500 selection:text-white dark:bg-[#050505] dark:text-neutral-200 transition-colors duration-300">
 
-    <!-- Scroll Progress Bar -->
     <div class="progress-bar" id="progress-bar"></div>
 
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/80 dark:bg-black/70 backdrop-blur-xl border-b border-neutral-200 dark:border-white/10 supports-[backdrop-filter]:bg-white/60">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-link text-brand-600 text-xl"></i>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">shortmylink<span class="text-brand-600">.in</span></span>
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-800 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-900/20">
+                        <i class="fa-solid fa-link text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-neutral-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400 transition-colors">shortmylink<span class="text-brand-600 dark:text-brand-500">.in</span></span>
                 </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="features.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Features</a>
-                    <a href="payouts.html" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Payout Rates</a>
-                    <div class="flex items-center space-x-3 ml-2">
-                        <a href="#" class="text-sm font-semibold text-slate-900 hover:text-brand-600">Login</a>
-                        <a href="#" class="magnetic-btn bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-brand-500/30">Sign Up</a>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="features.html" class="text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Features</a>
+                    
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-600 dark:text-brand-400 hover:scale-110 transition-all duration-300 focus:outline-none border border-neutral-200 dark:border-white/10">
+                        <i class="fa-solid fa-moon dark:hidden"></i> <i class="fa-solid fa-sun hidden dark:block"></i> </button>
+
+                    <a href="payouts.html" class="text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Payout Rates</a>
+                    
+                    <div class="flex items-center space-x-4 ml-2">
+                        <a href="#" class="text-sm font-bold text-neutral-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Log In</a>
+                        <a href="#" class="magnetic-btn bg-neutral-900 dark:bg-white hover:bg-brand-700 dark:hover:bg-brand-400 text-white dark:text-black px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-brand-900/30 border border-transparent">Sign Up</a>
                     </div>
                 </div>
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none">
+
+                <div class="md:hidden flex items-center gap-4">
+                     <button id="mobile-theme-toggle" class="text-neutral-600 dark:text-white focus:outline-none">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block"></i>
+                    </button>
+
+                    <button id="mobile-menu-btn" class="text-neutral-600 dark:text-white hover:text-neutral-900 focus:outline-none">
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100">
-            <div class="px-4 pt-2 pb-4 space-y-1">
-                <a href="features.html" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 rounded-md">Features</a>
-                <a href="#" class="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 rounded-md">Login</a>
-                <a href="#" class="block px-3 py-2 text-sm font-medium text-brand-600 font-bold bg-brand-50 rounded-md">Sign Up Free</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-[#111] border-t border-neutral-100 dark:border-white/10 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#features" class="block px-3 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-white/5 hover:text-brand-700 rounded-lg">Features</a>
+                <a href="#" class="block px-3 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-white/5 hover:text-brand-700 rounded-lg">Login</a>
+                <a href="#" class="block px-3 py-3 text-sm font-bold text-center text-white bg-brand-700 rounded-lg shadow-md">Sign Up Free</a>
             </div>
         </div>
     </nav>
 
-    <!-- Smooth Scroll Wrapper -->
     <div id="smooth-content">
         
-        <!-- Hero Section (Compact & Snappy) -->
-        <section class="relative pt-28 pb-16 lg:pt-36 lg:pb-20 overflow-hidden min-h-[85vh] flex items-center justify-center">
-            <!-- Moving Background Blobs -->
-            <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-brand-200 opacity-30 blur-[80px] parallax-blob" data-speed="0.5"></div>
-            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-teal-100 opacity-30 blur-[80px] parallax-blob" data-speed="-0.3"></div>
+        <section class="relative pt-32 pb-20 lg:pt-44 lg:pb-32 overflow-hidden min-h-[90vh] flex items-center justify-center">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-brand-200/50 dark:bg-brand-500/10 opacity-40 blur-[100px] parallax-blob mix-blend-multiply dark:mix-blend-screen" data-speed="0.5"></div>
+            <div class="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full bg-brand-100/60 dark:bg-brand-800/20 opacity-40 blur-[100px] parallax-blob mix-blend-multiply dark:mix-blend-screen" data-speed="-0.3"></div>
             
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
                 
-                <!-- Headline -->
-                <div class="mb-10 relative">
-                    <div class="hero-reveal overflow-hidden mb-3 inline-block">
-                        <span class="inline-block py-1 px-3 rounded-full bg-white/80 backdrop-blur text-brand-700 text-xs font-bold tracking-wide uppercase border border-brand-200 shadow-sm transform translate-y-full opacity-0 reveal-elem">
-                            🚀 Highest Paying Shortener
+                <div class="mb-12 relative">
+                    <div class="hero-reveal overflow-hidden mb-6 inline-block">
+                        <span class="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white dark:bg-white/10 border border-neutral-200 dark:border-white/10 shadow-sm text-brand-800 dark:text-brand-300 text-xs font-bold tracking-wide uppercase transform translate-y-full opacity-0 reveal-elem backdrop-blur-md">
+                            <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                            Highest CPM in the Market
                         </span>
                     </div>
                     
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
-                        <div class="overflow-hidden"><span class="block transform translate-y-full reveal-elem">Turn Traffic Into</span></div>
-                        <div class="overflow-hidden"><span class="block transform translate-y-full reveal-elem gradient-text pb-1">Real Money</span></div>
+                    <h1 class="text-6xl md:text-8xl font-extrabold text-neutral-900 dark:text-white tracking-tight leading-[0.95] mb-6 transition-colors">
+                        <div class="overflow-hidden"><span class="block transform translate-y-full reveal-elem">Monetize Your</span></div>
+                        <div class="overflow-hidden"><span class="block transform translate-y-full reveal-elem gradient-text pb-2">Digital Traffic</span></div>
                     </h1>
                     
-                    <div class="overflow-hidden max-w-xl mx-auto">
-                        <p class="text-lg text-slate-600 leading-relaxed transform translate-y-full reveal-elem">
-                            Shorten links, share them, and earn money on every view. <br class="hidden md:block">Market's best revenue split: <strong class="text-slate-900">85% for you</strong>.
+                    <div class="overflow-hidden max-w-2xl mx-auto">
+                        <p class="text-xl text-neutral-500 dark:text-neutral-400 font-medium leading-relaxed transform translate-y-full reveal-elem transition-colors">
+                            The professional URL shortener for serious publishers. <br class="hidden md:block">
+                            Advanced analytics, instant payouts, and <strong class="text-neutral-900 dark:text-white">85% revenue share</strong>.
                         </p>
                     </div>
                 </div>
 
-                <!-- 3D Tilt Card (Interactive) -->
-                <div id="tilt-card-container" class="max-w-2xl mx-auto perspective-1000">
-                    <div id="tilt-card" class="glass-card rounded-2xl p-2 transition-transform duration-100 ease-out transform-gpu">
-                        <div class="bg-white/60 rounded-xl p-6 border border-white/60">
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <input type="url" id="url-input" placeholder="Paste your long link here..." class="flex-1 px-5 py-3.5 rounded-lg text-slate-700 bg-slate-50/50 border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 outline-none transition-all text-base shadow-inner placeholder-slate-400" required>
-                                <button onclick="shortenUrl()" class="magnetic-btn px-6 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-lg text-base shadow-lg shadow-brand-500/30 transition-all flex items-center justify-center gap-2 group whitespace-nowrap">
+                <div id="tilt-card-container" class="max-w-3xl mx-auto perspective-1000">
+                    <div id="tilt-card" class="glass-card rounded-3xl p-3 transition-transform duration-100 ease-out transform-gpu">
+                        <div class="bg-white/90 dark:bg-[#151515] backdrop-blur-sm rounded-2xl p-8 border border-white dark:border-white/10 transition-colors">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <div class="relative flex-1">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fa-solid fa-link text-neutral-400 dark:text-neutral-500"></i>
+                                    </div>
+                                    <input type="url" id="url-input" placeholder="Paste your long URL here to monetize..." class="premium-input w-full pl-11 pr-5 py-4 rounded-xl text-neutral-700 dark:text-white bg-neutral-50 dark:bg-black border border-neutral-200 dark:border-white/10 hover:border-brand-300 dark:hover:border-brand-800 focus:border-brand-500 focus:outline-none transition-all text-base font-medium shadow-sm placeholder-neutral-400 dark:placeholder-neutral-600" required>
+                                </div>
+                                <button onclick="shortenUrl()" class="magnetic-btn px-8 py-4 bg-brand-800 hover:bg-brand-700 text-white font-bold rounded-xl text-base shadow-xl shadow-brand-900/20 transition-all flex items-center justify-center gap-2 group whitespace-nowrap border border-brand-700/50">
                                     <span>Shorten</span>
                                     <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                                 </button>
                             </div>
 
-                            <!-- Result -->
-                            <div id="result-container" class="hidden mt-4 bg-slate-900 rounded-lg p-4 shadow-xl border border-slate-800 animate-fade-in text-left">
-                                <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                                    <div class="flex items-center gap-3 overflow-hidden w-full">
-                                        <i class="fa-solid fa-check-circle text-green-500 text-lg"></i>
-                                        <span id="shortened-link" class="text-white font-mono text-base truncate">https://shortmylink.in/x9j2M</span>
+                            <div id="result-container" class="hidden mt-6 bg-neutral-900 dark:bg-black rounded-xl p-5 shadow-2xl border border-neutral-800 dark:border-white/10 animate-fade-in text-left relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-[40px]"></div>
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+                                    <div class="flex items-center gap-4 overflow-hidden w-full">
+                                        <div class="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center flex-shrink-0">
+                                            <i class="fa-solid fa-check text-brand-500"></i>
+                                        </div>
+                                        <div class="flex flex-col overflow-hidden">
+                                            <span class="text-xs text-neutral-400 uppercase tracking-wider font-semibold">Your Short Link</span>
+                                            <span id="shortened-link" class="text-white font-mono text-lg font-medium truncate">https://shortmylink.in/x9j2M</span>
+                                        </div>
                                     </div>
-                                    <button onclick="copyLink()" id="copy-btn" class="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-md text-xs font-bold transition-all hover:scale-105 flex items-center justify-center gap-2">
-                                        <i class="fa-regular fa-copy"></i> <span>Copy</span>
+                                    <button onclick="copyLink()" id="copy-btn" class="w-full sm:w-auto px-6 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg text-sm font-bold transition-all hover:scale-105 flex items-center justify-center gap-2 border border-neutral-700">
+                                        <i class="fa-regular fa-copy"></i> <span>Copy Link</span>
                                     </button>
                                 </div>
                             </div>
@@ -194,67 +236,68 @@
                     </div>
                 </div>
                 
-                <!-- Trust Badges -->
-                <div class="mt-8 flex flex-wrap justify-center gap-6 text-xs text-slate-500 font-semibold uppercase tracking-wider reveal-elem opacity-0">
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-brand-500"></i> SSL Secured</span>
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-brand-500"></i> Fast Redirects</span>
+                <div class="mt-10 flex flex-wrap justify-center gap-8 text-xs text-neutral-400 dark:text-neutral-500 font-bold uppercase tracking-widest reveal-elem opacity-0 transition-colors">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-lock text-brand-600 dark:text-brand-500 text-sm"></i> Enterprise Security</span>
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-brand-600 dark:text-brand-500 text-sm"></i> Real-time Analytics</span>
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-globe text-brand-600 dark:text-brand-500 text-sm"></i> Global CDN</span>
                 </div>
             </div>
         </section>
 
-        <!-- The Split Section (Optimized Layout) -->
-        <section class="py-20 bg-white relative z-20 rounded-t-[2rem] -mt-8 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <section class="py-24 bg-white dark:bg-[#0a0a0a] relative z-20 rounded-t-[3rem] -mt-10 shadow-[0_-10px_60px_rgba(0,0,0,0.03)] border-t border-neutral-100 dark:border-white/5 transition-colors duration-500">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-slate-900 rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-xl">
-                    <!-- Decor -->
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500/20 rounded-full blur-[80px] -mr-20 -mt-20"></div>
+                <div class="bg-[#111] dark:bg-black rounded-[2.5rem] p-10 md:p-16 relative overflow-hidden shadow-2xl border dark:border-white/10">
+                    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-900/40 rounded-full blur-[100px] -mr-40 -mt-40"></div>
+                    <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-800/20 rounded-full blur-[100px] -ml-20 -mb-20"></div>
 
-                    <div class="relative z-10 grid md:grid-cols-2 gap-10 items-center">
+                    <div class="relative z-10 grid md:grid-cols-2 gap-16 items-center">
                         <div class="gsap-fade-right">
-                            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">Fair Play.<br><span class="text-brand-500">Better Pay.</span></h2>
-                            <p class="text-slate-400 text-base mb-8 leading-relaxed max-w-md">
-                                Most shorteners keep 50%. We believe creators deserve the lion's share.
+                            <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">Fair Play.<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-brand-600">Superior Pay.</span></h2>
+                            <p class="text-neutral-400 text-lg mb-10 leading-relaxed max-w-md">
+                                Don't settle for 50%. We've engineered a monetization engine that prioritizes the creator.
                             </p>
-                            <ul class="space-y-4">
-                                <li class="flex items-start gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-slate-900 text-sm mt-0.5">
-                                        <i class="fa-solid fa-check"></i>
+                            <ul class="space-y-6">
+                                <li class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 mt-1 border border-brand-800">
+                                        <i class="fa-solid fa-chart-pie"></i>
                                     </div>
                                     <div>
-                                        <strong class="text-white block text-lg">85% Revenue Share</strong>
-                                        <span class="text-slate-400 text-sm">You keep more of what you earn.</span>
+                                        <strong class="text-white block text-xl mb-1">85% Revenue Share</strong>
+                                        <span class="text-neutral-400 text-sm font-medium">Industry leading payout ratio.</span>
                                     </div>
                                 </li>
-                                <li class="flex items-start gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-slate-900 text-sm mt-0.5">
-                                        <i class="fa-solid fa-check"></i>
+                                <li class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-brand-900/50 flex items-center justify-center text-brand-400 mt-1 border border-brand-800">
+                                        <i class="fa-solid fa-clock"></i>
                                     </div>
                                     <div>
-                                        <strong class="text-white block text-lg">15 Second Timer</strong>
-                                        <span class="text-slate-400 text-sm">Balanced for high CPM.</span>
+                                        <strong class="text-white block text-xl mb-1">Optimized UX</strong>
+                                        <span class="text-neutral-400 text-sm font-medium">15s timer balanced for retention & CPM.</span>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         
-                        <!-- Optimized Revenue Chart -->
-                        <div class="bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 gsap-scale-up">
-                            <h3 class="text-slate-300 text-xs font-bold uppercase tracking-widest mb-10 text-center">Revenue Split Comparison</h3>
-                            <div class="flex items-end gap-6 h-64 px-2">
-                                <!-- Competitors -->
+                        <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 gsap-scale-up shadow-2xl">
+                            <div class="flex justify-between items-center mb-10">
+                                <h3 class="text-neutral-400 text-xs font-bold uppercase tracking-widest">Revenue Split</h3>
+                                <div class="px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-bold border border-brand-500/20">Live Comparison</div>
+                            </div>
+                            
+                            <div class="flex items-end gap-8 h-72 px-4">
                                 <div class="w-1/2 flex flex-col justify-end group">
-                                    <div class="text-center mb-2 text-slate-400 font-bold text-lg">50%</div>
-                                    <div class="bg-slate-700 w-full rounded-t-lg relative bar-anim" style="height: 0%;" data-height="50%"></div>
-                                    <div class="mt-3 text-center text-slate-500 font-bold text-sm">Others</div>
+                                    <div class="text-center mb-3 text-neutral-500 font-bold text-xl group-hover:text-neutral-400 transition-colors">50%</div>
+                                    <div class="bg-neutral-700/50 w-full rounded-t-xl relative bar-anim backdrop-blur-sm border border-neutral-600/30" style="height: 0%;" data-height="50%"></div>
+                                    <div class="mt-4 text-center text-neutral-500 font-bold text-xs uppercase tracking-wider">Competitors</div>
                                 </div>
-                                <!-- Us (Text moved above bar to fix overlap) -->
                                 <div class="w-1/2 flex flex-col justify-end group relative">
-                                    <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-brand-500 text-slate-900 text-[10px] font-bold py-1 px-2 rounded-full shadow-lg whitespace-nowrap animate-bounce">
-                                        Best Choice
+                                    <div class="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-brand-600 to-brand-500 text-white text-[10px] font-bold py-1.5 px-3 rounded-full shadow-lg shadow-brand-900/40 whitespace-nowrap animate-bounce z-20">
+                                        Max Profit
+                                        <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-brand-500 rotate-45"></div>
                                     </div>
-                                    <div class="text-center mb-2 text-white font-bold text-3xl">85%</div>
-                                    <div class="bg-gradient-to-b from-brand-400 to-brand-600 w-full rounded-t-lg relative shadow-[0_0_30px_rgba(34,197,94,0.3)] bar-anim" style="height: 0%;" data-height="85%"></div>
-                                    <div class="mt-3 text-center text-white font-bold text-sm">ShortMyLink</div>
+                                    <div class="text-center mb-3 text-white font-bold text-4xl drop-shadow-md">85%</div>
+                                    <div class="bg-gradient-to-t from-brand-900 to-brand-500 w-full rounded-t-xl relative shadow-[0_0_40px_rgba(16,185,129,0.3)] bar-anim border-t border-x border-white/10" style="height: 0%;" data-height="85%"></div>
+                                    <div class="mt-4 text-center text-white font-bold text-xs uppercase tracking-wider">ShortMyLink</div>
                                 </div>
                             </div>
                         </div>
@@ -263,106 +306,99 @@
             </div>
         </section>
 
-        <!-- Features Grid (Compact) -->
-        <section id="features" class="py-20 bg-slate-50">
+        <section id="features" class="py-24 bg-neutral-50 dark:bg-[#050505] transition-colors duration-500">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Why Top Publishers <br>Choose Us</h2>
-                    <p class="text-lg text-slate-500 max-w-xl mx-auto">Tools built to maximize your earnings.</p>
+                <div class="text-center mb-20">
+                    <span class="text-brand-700 dark:text-brand-500 font-bold tracking-wider uppercase text-xs mb-2 block">Publisher Toolkit</span>
+                    <h2 class="text-3xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-6">Built for High Volume</h2>
+                    <p class="text-lg text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto leading-relaxed">Enterprise-grade tools to maximize your earnings per click.</p>
                 </div>
                 
-                <div class="grid md:grid-cols-3 gap-6">
-                    <!-- Feature 1 -->
-                    <div class="feature-card bg-white p-6 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 text-xl mb-4 group-hover:rotate-6 transition-transform">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="feature-card bg-white dark:bg-[#111] p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] dark:shadow-none border border-neutral-100 dark:border-white/10 hover:border-brand-100 dark:hover:border-brand-900 hover:shadow-2xl hover:shadow-brand-900/5 hover:-translate-y-2 transition-all duration-300 group">
+                        <div class="w-14 h-14 bg-brand-50 dark:bg-brand-900/20 rounded-xl flex items-center justify-center text-brand-700 dark:text-brand-400 text-2xl mb-6 group-hover:scale-110 transition-transform duration-300 border border-brand-100 dark:border-brand-800/30">
                             <i class="fa-solid fa-stopwatch"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">15 Second Timer</h3>
-                        <p class="text-slate-600 leading-relaxed text-sm">
-                            A perfectly balanced wait time. Long enough for revenue, short enough to keep visitors happy.
+                        <h3 class="text-xl font-bold text-neutral-900 dark:text-white mb-3">Smart Wait Timer</h3>
+                        <p class="text-neutral-500 dark:text-neutral-400 leading-relaxed font-medium">
+                            A dynamic 15-second system. Optimized to ensure ad viewability without frustrating traffic.
                         </p>
                     </div>
 
-                    <!-- Feature 2 -->
-                    <div class="feature-card bg-white p-6 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 md:mt-8 group">
-                        <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center text-green-600 text-xl mb-4 group-hover:rotate-6 transition-transform">
-                            <i class="fa-solid fa-money-bill-trend-up"></i>
+                    <div class="feature-card bg-white dark:bg-[#111] p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] dark:shadow-none border border-neutral-100 dark:border-white/10 hover:border-brand-100 dark:hover:border-brand-900 hover:shadow-2xl hover:shadow-brand-900/5 hover:-translate-y-2 transition-all duration-300 md:mt-12 group">
+                        <div class="w-14 h-14 bg-gold-500/10 dark:bg-gold-500/10 rounded-xl flex items-center justify-center text-gold-600 dark:text-gold-400 text-2xl mb-6 group-hover:scale-110 transition-transform duration-300 border border-gold-600/20 dark:border-gold-600/10">
+                            <i class="fa-solid fa-wallet"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">Minimum $5 Payout</h3>
-                        <p class="text-slate-600 leading-relaxed text-sm">
-                            Withdraw as soon as you reach $5. We support PayPal, UPI, and Bank Transfer.
+                        <h3 class="text-xl font-bold text-neutral-900 dark:text-white mb-3">Rapid $5 Payouts</h3>
+                        <p class="text-neutral-500 dark:text-neutral-400 leading-relaxed font-medium">
+                            Low withdrawal threshold. Get paid via PayPal, UPI, or Direct Bank Transfer within 24 hours.
                         </p>
                     </div>
 
-                    <!-- Feature 3 -->
-                    <div class="feature-card bg-white p-6 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                        <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600 text-xl mb-4 group-hover:rotate-6 transition-transform">
-                            <i class="fa-solid fa-users-viewfinder"></i>
+                    <div class="feature-card bg-white dark:bg-[#111] p-8 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.03)] dark:shadow-none border border-neutral-100 dark:border-white/10 hover:border-brand-100 dark:hover:border-brand-900 hover:shadow-2xl hover:shadow-brand-900/5 hover:-translate-y-2 transition-all duration-300 group">
+                        <div class="w-14 h-14 bg-orange-50 dark:bg-orange-900/10 rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400 text-2xl mb-6 group-hover:scale-110 transition-transform duration-300 border border-orange-100 dark:border-orange-900/20">
+                            <i class="fa-solid fa-chart-line"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 mb-2">Detailed Analytics</h3>
-                        <p class="text-slate-600 leading-relaxed text-sm">
-                            Track every click. Know audience location, devices used, and earnings per link.
+                        <h3 class="text-xl font-bold text-neutral-900 dark:text-white mb-3">Deep Analytics</h3>
+                        <p class="text-neutral-500 dark:text-neutral-400 leading-relaxed font-medium">
+                            Granular data points. Track geographic origin, device types, and referrer sources.
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CTA Section (Green Style) -->
-        <section class="bg-brand-500 py-20 text-center">
-            <div class="max-w-4xl mx-auto px-4">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Ready to boost your income?</h2>
-                <p class="text-brand-50 text-lg mb-8">Join thousands of publishers earning 85% revenue share today.</p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="magnetic-btn px-8 py-3 bg-white text-brand-700 font-bold rounded-lg shadow-lg hover:bg-slate-50 transition-colors">Create Free Account</button>
-                    <button class="magnetic-btn px-8 py-3 bg-brand-600 text-white font-bold rounded-lg border border-brand-400 hover:bg-brand-700 transition-colors">Check Rates</button>
+        <section class="relative py-28 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-brand-950 via-brand-900 to-black"></div>
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            
+            <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Stop leaving money on the table.</h2>
+                <p class="text-brand-100 text-xl mb-10 font-light">Join the elite network of publishers earning more with ShortMyLink.</p>
+                <div class="flex flex-col sm:flex-row gap-5 justify-center">
+                    <button class="magnetic-btn px-10 py-4 bg-white text-brand-900 font-extrabold rounded-xl shadow-xl shadow-black/30 hover:bg-neutral-100 transition-all hover:-translate-y-1">Create Free Account</button>
+                    <button class="magnetic-btn px-10 py-4 bg-transparent border-2 border-brand-500 text-white font-bold rounded-xl hover:bg-brand-900/50 hover:border-brand-400 transition-all hover:-translate-y-1">View Payout Rates</button>
                 </div>
             </div>
         </section>
 
-        <!-- Footer (Dark & Clean) -->
-        <footer class="bg-slate-900 text-slate-400 py-12">
+        <footer class="bg-black text-neutral-400 py-16 border-t border-neutral-800">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid md:grid-cols-4 gap-8">
+                <div class="grid md:grid-cols-4 gap-12">
                     <div class="col-span-1 md:col-span-2">
-                        <div class="flex items-center gap-2 mb-4">
-                            <i class="fa-solid fa-link text-brand-500 text-lg"></i>
+                        <div class="flex items-center gap-2 mb-6">
+                            <div class="w-8 h-8 rounded bg-brand-700 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-link text-xs"></i>
+                            </div>
                             <span class="font-bold text-xl text-white">shortmylink<span class="text-brand-500">.in</span></span>
                         </div>
-                        <p class="text-sm max-w-sm mb-6 leading-relaxed">
-                            The highest paying URL shortener platform. We prioritize our publishers with an 85% revenue share model and fast payouts.
+                        <p class="text-sm max-w-sm mb-8 leading-relaxed text-neutral-500">
+                            The premium URL shortening platform designed for content creators and marketers. Maximize revenue with our industry-leading 85% share model.
                         </p>
-                        <div class="flex gap-4">
-                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fa-brands fa-twitter text-xs"></i></a>
-                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fa-brands fa-facebook-f text-xs"></i></a>
-                            <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fa-brands fa-instagram text-xs"></i></a>
-                        </div>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold mb-4 text-sm">Platform</h4>
-                        <ul class="space-y-2 text-sm">
+                        <h4 class="text-white font-bold mb-6 text-sm tracking-wide uppercase">Platform</h4>
+                        <ul class="space-y-3 text-sm font-medium">
                             <li><a href="#" class="hover:text-brand-500 transition-colors">Payout Rates</a></li>
                             <li><a href="#" class="hover:text-brand-500 transition-colors">Payment Proof</a></li>
-                            <li><a href="#" class="hover:text-brand-500 transition-colors">Developer API</a></li>
-                            <li><a href="#" class="hover:text-brand-500 transition-colors">Referral Program</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold mb-4 text-sm">Support</h4>
-                        <ul class="space-y-2 text-sm">
+                        <h4 class="text-white font-bold mb-6 text-sm tracking-wide uppercase">Support</h4>
+                        <ul class="space-y-3 text-sm font-medium">
                             <li><a href="#" class="hover:text-brand-500 transition-colors">Terms of Service</a></li>
                             <li><a href="#" class="hover:text-brand-500 transition-colors">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-brand-500 transition-colors">Contact Us</a></li>
-                            <li><a href="#" class="hover:text-brand-500 transition-colors">DMCA</a></li>
                         </ul>
                     </div>
+                </div>
+                <div class="border-t border-neutral-800 mt-16 pt-8 text-xs text-center text-neutral-600">
+                    &copy; 2024 ShortMyLink.in. All rights reserved. Made with <i class="fa-solid fa-heart text-red-900 mx-1"></i> for creators By OM DHAGE.
                 </div>
             </div>
         </footer>
 
-    </div> <!-- End Smooth Scroll Wrapper -->
+    </div>
 
-    <!-- Import Lenis & GSAP -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -370,7 +406,66 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             
-            // --- 1. Setup Lenis with Optimized Velocity Skew ---
+            // --- HEAVENLY DARK MODE LOGIC (View Transitions API) ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const mobileThemeToggleBtn = document.getElementById('mobile-theme-toggle');
+
+            // Apply saved theme preference (persist across pages)
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+                else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+            } catch (err) {
+                // ignore storage errors (e.g., privacy mode)
+            }
+            
+            function toggleTheme(event) {
+                // support for clicks without coordinates
+                const x = event?.clientX ?? Math.round(innerWidth / 2);
+                const y = event?.clientY ?? Math.round(innerHeight / 2);
+
+                // If browser doesn't support View Transitions, just toggle class and persist
+                if (!document.startViewTransition) {
+                    const isDark = document.documentElement.classList.toggle('dark');
+                    try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+                    return;
+                }
+
+                // Calculate radius to cover the furthest corner
+                const endRadius = Math.hypot(
+                    Math.max(x, innerWidth - x),
+                    Math.max(y, innerHeight - y)
+                );
+
+                const transition = document.startViewTransition(() => {
+                    document.documentElement.classList.toggle('dark');
+                    // persist new state
+                    try { localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+                });
+
+                // Animate the clip-path
+                transition.ready.then(() => {
+                    document.documentElement.animate(
+                        {
+                            clipPath: [
+                                `circle(0px at ${x}px ${y}px)`,
+                                `circle(${endRadius}px at ${x}px ${y}px)`
+                            ]
+                        },
+                        {
+                            duration: 600,
+                            easing: 'ease-out',
+                            pseudoElement: '::view-transition-new(root)'
+                        }
+                    );
+                });
+            }
+
+            if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+            if(mobileThemeToggleBtn) mobileThemeToggleBtn.addEventListener('click', toggleTheme);
+
+
+            // --- STANDARD LENIS & GSAP (Existing Code) ---
             if (typeof Lenis !== 'undefined') {
                 const lenis = new Lenis({
                     duration: 1.2,
@@ -380,11 +475,8 @@
                     mouseMultiplier: 1,
                 });
 
-                // GSAP + Lenis Connection
                 lenis.on('scroll', (e) => {
                     ScrollTrigger.update();
-                    
-                    // VELOCITY SKEW: Adjusted for subtlety (0.02 instead of 0.05)
                     if(e.velocity) {
                         const skewAmount = e.velocity * 0.02; 
                         gsap.to('#smooth-content', {
@@ -396,7 +488,6 @@
                     }
                 });
 
-                // Reset skew quickly
                 lenis.on('scroll', debounce(() => {
                     gsap.to('#smooth-content', { skewY: 0, duration: 0.4, ease: "power3.out" });
                 }, 100));
@@ -407,11 +498,10 @@
                 gsap.ticker.add(raf);
             }
 
-            // --- 2. GSAP Animations (Faster Timings) ---
+            // GSAP Animations
             if (typeof gsap !== 'undefined') {
                 gsap.registerPlugin(ScrollTrigger);
 
-                // A. Progress Bar
                 gsap.to("#progress-bar", {
                     scaleX: 1,
                     ease: "none",
@@ -423,17 +513,15 @@
                     }
                 });
 
-                // B. Hero Reveal (Faster: 0.6s duration)
                 const heroTl = gsap.timeline({ delay: 0.1 });
                 heroTl.to(".reveal-elem", {
                     y: 0,
                     opacity: 1,
-                    duration: 0.6, 
-                    stagger: 0.08,
-                    ease: "power3.out"
+                    duration: 0.8, 
+                    stagger: 0.1,
+                    ease: "power4.out"
                 });
 
-                // C. Parallax Blobs
                 gsap.utils.toArray(".parallax-blob").forEach(blob => {
                     gsap.to(blob, {
                         y: (i, target) => ScrollTrigger.maxScroll(window) * parseFloat(target.dataset.speed),
@@ -447,12 +535,11 @@
                     });
                 });
 
-                // D. Bar Charts (Faster: 1.0s duration)
                 gsap.utils.toArray(".bar-anim").forEach(bar => {
                     gsap.to(bar, {
                         height: bar.dataset.height,
-                        duration: 1.0,
-                        ease: "power2.out",
+                        duration: 1.2,
+                        ease: "power3.out",
                         scrollTrigger: {
                             trigger: bar,
                             start: "top 85%"
@@ -460,13 +547,12 @@
                     });
                 });
 
-                // E. Feature Cards (Faster: 0.6s duration)
                 gsap.utils.toArray(".feature-card").forEach((card, i) => {
                     gsap.from(card, {
-                        y: 40,
+                        y: 50,
                         opacity: 0,
-                        duration: 0.6,
-                        delay: i * 0.05,
+                        duration: 0.8,
+                        delay: i * 0.1,
                         ease: "power3.out",
                         scrollTrigger: {
                             trigger: card,
@@ -476,7 +562,7 @@
                 });
             }
 
-            // --- 3. 3D Tilt (Subtle - 8deg) ---
+            // 3D Tilt
             const card = document.getElementById('tilt-card');
             const container = document.getElementById('tilt-card-container');
 
@@ -486,10 +572,10 @@
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
-                    const xRot = -((y - rect.height / 2) / rect.height * 8); 
-                    const yRot = (x - rect.width / 2) / rect.width * 8;
+                    const xRot = -((y - rect.height / 2) / rect.height * 5); 
+                    const yRot = (x - rect.width / 2) / rect.width * 5;
 
-                    card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(1.01, 1.01, 1.01)`;
+                    card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(1.005, 1.005, 1.005)`;
                 });
 
                 container.addEventListener('mouseleave', () => {
@@ -497,7 +583,7 @@
                 });
             }
 
-            // --- 4. Magnetic Buttons ---
+            // Magnetic Buttons
             const magneticBtns = document.querySelectorAll('.magnetic-btn');
             magneticBtns.forEach(btn => {
                 btn.addEventListener('mousemove', (e) => {
@@ -506,8 +592,8 @@
                     const y = e.clientY - rect.top - rect.height / 2;
                     
                     gsap.to(btn, {
-                        x: x * 0.2, 
-                        y: y * 0.2,
+                        x: x * 0.15, 
+                        y: y * 0.15,
                         duration: 0.3,
                         ease: "power2.out"
                     });
@@ -562,7 +648,7 @@
                 resultContainer.classList.remove('hidden');
                 btn.innerHTML = originalBtnContent;
                 btn.disabled = false;
-            }, 1000); // 1 second timer
+            }, 1000); 
         }
 
         function copyLink() {
@@ -572,12 +658,12 @@
             navigator.clipboard.writeText(linkText).then(() => {
                 const originalHtml = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
-                btn.classList.remove('bg-slate-700', 'hover:bg-slate-600');
+                btn.classList.remove('bg-neutral-800', 'hover:bg-neutral-700');
                 btn.classList.add('bg-brand-600', 'hover:bg-brand-700');
                 
                 setTimeout(() => {
                     btn.innerHTML = originalHtml;
-                    btn.classList.add('bg-slate-700', 'hover:bg-slate-600');
+                    btn.classList.add('bg-neutral-800', 'hover:bg-neutral-700');
                     btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
                 }, 2000);
             }).catch(err => {
