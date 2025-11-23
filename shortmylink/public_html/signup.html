@@ -135,7 +135,7 @@
                     </button>
                     
                     <div class="flex items-center space-x-4 ml-2">
-                        <a href="#" class="text-sm font-bold text-neutral-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Log In</a>
+                        <a href="login.html" class="text-sm font-bold text-neutral-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Log In</a>
                         <!-- Sign up hidden here since we are on the page -->
                     </div>
                 </div>
@@ -226,8 +226,8 @@
                                 <p class="text-neutral-500 dark:text-neutral-400 text-sm mt-2">Start your journey with ShortMyLink</p>
                             </div>
 
-                           <!-- CHANGE: Point to the new deployment loader -->
-                            <form action="deploy_loader.html" class="space-y-4">                        
+                            <!-- ADDED ID "signup-form" -->
+                            <form id="signup-form" class="space-y-4">                        
                                 <button type="button" class="social-btn w-full bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-3 shadow-sm hover:shadow-md">
                                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
                                     <span>Sign up with Google</span>
@@ -242,17 +242,20 @@
                                 <div class="grid md:grid-cols-2 gap-5">
                                     <div class="relative group">
                                         <i class="fa-regular fa-user absolute left-4 top-4 text-neutral-400 group-focus-within:text-brand-500 transition-colors z-10"></i>
-                                        <input type="text" placeholder="Username" class="premium-input w-full pl-11 pr-4 py-3.5 bg-neutral-50 dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none dark:text-white placeholder-neutral-400">
+                                        <!-- ADDED ID "signup-username" -->
+                                        <input type="text" id="signup-username" placeholder="Username" class="premium-input w-full pl-11 pr-4 py-3.5 bg-neutral-50 dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none dark:text-white placeholder-neutral-400">
                                     </div>
                                     <div class="relative group">
                                         <i class="fa-regular fa-envelope absolute left-4 top-4 text-neutral-400 group-focus-within:text-brand-500 transition-colors z-10"></i>
-                                        <input type="email" placeholder="Email Address" class="premium-input w-full pl-11 pr-4 py-3.5 bg-neutral-50 dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none dark:text-white placeholder-neutral-400">
+                                        <!-- ADDED ID "signup-email" -->
+                                        <input type="email" id="signup-email" placeholder="Email Address" class="premium-input w-full pl-11 pr-4 py-3.5 bg-neutral-50 dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none dark:text-white placeholder-neutral-400">
                                     </div>
                                 </div>
 
                                 <div class="relative group">
                                     <i class="fa-solid fa-lock absolute left-4 top-4 text-neutral-400 group-focus-within:text-brand-500 transition-colors z-10"></i>
-                                    <input type="password" placeholder="Password" class="premium-input w-full pl-11 pr-4 py-3.5 bg-neutral-50 dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none dark:text-white placeholder-neutral-400">
+                                    <!-- ADDED ID "signup-password" -->
+                                    <input type="password" id="signup-password" placeholder="Password" class="premium-input w-full pl-11 pr-4 py-3.5 bg-neutral-50 dark:bg-[#0a0a0a] border border-neutral-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none dark:text-white placeholder-neutral-400">
                                 </div>
 
                                 <div class="relative group">
@@ -269,12 +272,13 @@
                                     </label>
                                 </div>
 
-                                <button type="submit" class="magnetic-btn w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all hover:-translate-y-1 mt-6">
+                                <!-- CHANGED TO onclick="submitSignup()" -->
+                                <button type="button" onclick="submitSignup()" class="magnetic-btn w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all hover:-translate-y-1 mt-6">
                                     Create Free Account
                                 </button>
 
                                 <p class="text-center text-sm text-neutral-500 dark:text-neutral-400 mt-6 font-medium">
-                                    Already have an account? <a href="#" class="text-brand-600 hover:text-brand-700 font-bold ml-1 transition-colors">Log In</a>
+                                    Already have an account? <a href="login.html" class="text-brand-600 hover:text-brand-700 font-bold ml-1 transition-colors">Log In</a>
                                 </p>
                             </form>
                         </div>
@@ -298,6 +302,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <script>
+        // --- ADDED: Form Submission Logic ---
+        function submitSignup() {
+            // 1. Capture Data
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            // 2. Basic Validation
+            if (!username || !email || !password) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // 3. Save to LocalStorage (For deploy_loader.html to pick up)
+            localStorage.setItem('pending_username', username);
+            localStorage.setItem('pending_email', email);
+            localStorage.setItem('pending_password', password);
+
+            // 4. Redirect to the Loader
+            window.location.href = 'deploy_loader.html';
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             
             // --- HEAVENLY DARK MODE LOGIC ---

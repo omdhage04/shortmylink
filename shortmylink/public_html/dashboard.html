@@ -1,565 +1,374 @@
-    <!DOCTYPE html>
-    <html lang="en" class="light">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Command Center | ShortMyLink.in</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        <!-- Fonts: Plus Jakarta Sans for UI, JetBrains Mono for Data -->
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-        <!-- Chart.js for the Revenue Graph -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center | ShortMyLink.in</title>
+    
+    <!-- 1. IMMEDIATE THEME CHECK -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* --- CORE STYLES --- */
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
         
-        <style>
-            /* --- CORE STYLES --- */
-            html.lenis, html.lenis body { height: auto; }
-            .lenis.lenis-smooth { scroll-behavior: auto !important; }
-            .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-            .lenis.lenis-stopped { overflow: hidden; }
-            
-            body {
-                font-family: 'Plus Jakarta Sans', sans-serif;
-                background-color: #f8fafc;
-                transition: background-color 0.3s ease, color 0.3s ease;
-            }
-            .dark body { background-color: #020408; color: #e5e5e5; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dark body { background-color: #020408; color: #e5e5e5; }
 
-            /* HEAVENLY TRANSITION (View Transitions API) */
-            ::view-transition-old(root),
-            ::view-transition-new(root) {
-                animation: none;
-                mix-blend-mode: normal;
-            }
+        ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .tech-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+        }
+        .dark .tech-grid {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+        }
 
-            /* UTILITIES */
-            .font-mono { font-family: 'JetBrains Mono', monospace; }
-            
-            .tech-grid {
-                background-size: 40px 40px;
-                background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-                                linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
-            }
-            .dark .tech-grid {
-                background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-                                linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
-            }
+        .sidebar-glass {
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-right: 1px solid rgba(0,0,0,0.05);
+        }
+        .dark .sidebar-glass {
+            background: rgba(10, 10, 10, 0.6); border-right: 1px solid rgba(255,255,255,0.05);
+        }
 
-            /* SIDEBAR GLASS */
-            .sidebar-glass {
-                background: rgba(255, 255, 255, 0.8);
-                backdrop-filter: blur(20px);
-                border-right: 1px solid rgba(0,0,0,0.05);
-            }
-            .dark .sidebar-glass {
-                background: rgba(10, 10, 10, 0.6);
-                border-right: 1px solid rgba(255,255,255,0.05);
-            }
+        .stat-card {
+            background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .dark .stat-card {
+            background: #0f1115; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
 
-            /* CARD STYLES */
-            .stat-card {
-                background: white;
-                border: 1px solid rgba(0,0,0,0.05);
-                border-radius: 1rem;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
-            .dark .stat-card {
-                background: #0f1115; /* Slightly lighter than bg */
-                border: 1px solid rgba(255,255,255,0.05);
-            }
-            .stat-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
-                border-color: rgba(16, 185, 129, 0.3); /* Brand color hover */
-            }
+        .nav-item { position: relative; transition: all 0.2s; }
+        .nav-item:hover, .nav-item.active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .nav-item.active::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+            background: #10b981; border-radius: 0 4px 4px 0;
+        }
 
-            /* NAV LINKS */
-            .nav-item {
-                position: relative;
-                transition: all 0.2s;
-            }
-            .nav-item:hover, .nav-item.active {
-                background: rgba(16, 185, 129, 0.1);
-                color: #10b981;
-            }
-            .nav-item.active::before {
-                content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-                background: #10b981; border-radius: 0 4px 4px 0;
-            }
+        /* SKELETON LOADER STYLE */
+        .skeleton {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            background-color: rgba(0,0,0,0.1);
+            color: transparent !important;
+            border-radius: 4px;
+            display: inline-block;
+            min-width: 60px;
+        }
+        .dark .skeleton { background-color: rgba(255,255,255,0.1); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 
-            /* ANIMATIONS */
-            @keyframes loadBar { from { width: 0; } to { width: 65%; } }
-            .load-anim { animation: loadBar 1.5s ease-out forwards; }
-
-            /* SCROLLBAR */
-            ::-webkit-scrollbar { width: 6px; height: 6px; }
-            ::-webkit-scrollbar-track { background: transparent; }
-            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-            .dark ::-webkit-scrollbar-thumb { background: #334155; }
-        </style>
-        <script>
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                        colors: {
-                            brand: {
-                                50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 400: '#34d399',
-                                500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b',
-                            }
-                        }
-                    }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { brand: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 400: '#34d399', 500: '#10b981', 600: '#059669', 900: '#064e3b' } }
                 }
             }
-        </script>
-    </head>
-    <body class="h-screen overflow-hidden flex text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
+        }
+    </script>
+</head>
+<body class="h-screen overflow-hidden flex text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
 
-        <!-- --- SIDEBAR NAVIGATION --- -->
-        <aside class="sidebar-glass w-20 lg:w-64 h-full flex flex-col fixed lg:relative z-30 transition-all duration-300 hidden md:flex">
-            
-            <!-- Logo Area -->
-            <div class="h-20 flex items-center justify-center lg:justify-start lg:px-8 border-b border-neutral-200/50 dark:border-white/5">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-800 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-900/20 shrink-0">
-                    <i class="fa-solid fa-link text-sm"></i>
+    <!-- SIDEBAR -->
+    <aside class="sidebar-glass w-20 lg:w-64 h-full flex flex-col fixed lg:relative z-30 transition-all duration-300 hidden md:flex">
+        
+        <div class="h-20 flex items-center justify-center lg:justify-start lg:px-8 border-b border-neutral-200/50 dark:border-white/5">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-800 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-900/20 shrink-0">
+                <i class="fa-solid fa-link text-sm"></i>
+            </div>
+            <span class="font-bold text-xl ml-3 hidden lg:block tracking-tight text-neutral-900 dark:text-white">shortmylink</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-6 space-y-2 px-3">
+            <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2 hidden lg:block">Main Interface</div>
+            <a href="dashboard.html" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-brand-600 dark:text-brand-400">
+                <i class="fa-solid fa-grid-2 w-5 text-center"></i><span class="hidden lg:block">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-link w-5 text-center"></i><span class="hidden lg:block">Manage Links</span>
+            </a>
+            <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-wallet w-5 text-center"></i><span class="hidden lg:block">Payments</span>
+            </a>
+            <a href="analytics.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-chart-pie w-5 text-center"></i><span class="hidden lg:block">Analytics</span>
+            </a>
+            <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2 mt-6 hidden lg:block">Tools</div>
+            <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-code w-5 text-center"></i><span class="hidden lg:block">Developer API</span>
+            </a>
+        </div>
+
+        <!-- --- USER PROFILE SECTION --- -->
+        <div class="p-4 border-t border-neutral-200/50 dark:border-white/5">
+            <div class="bg-neutral-100 dark:bg-white/5 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-neutral-200 dark:hover:bg-white/10 transition-colors">
+                <!-- Avatar with ID -->
+                <div id="profile-avatar" class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold">
+                    <i class="fa-solid fa-user"></i>
                 </div>
-                <span class="font-bold text-xl ml-3 hidden lg:block tracking-tight text-neutral-900 dark:text-white">shortmylink</span>
-            </div>
-
-            <!-- Menu -->
-            <div class="flex-1 overflow-y-auto py-6 space-y-2 px-3">
-                <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2 hidden lg:block">Main Interface</div>
-                
-                <a href="#" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-brand-600 dark:text-brand-400">
-                    <i class="fa-solid fa-grid-2 w-5 text-center"></i>
-                    <span class="hidden lg:block">Dashboard</span>
-                </a>
-                <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                    <i class="fa-solid fa-link w-5 text-center"></i>
-                    <span class="hidden lg:block">Manage Links</span>
-                </a>
-                <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                    <i class="fa-solid fa-wallet w-5 text-center"></i>
-                    <span class="hidden lg:block">Payments</span>
-                </a>
-                <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                    <i class="fa-solid fa-chart-pie w-5 text-center"></i>
-                    <span class="hidden lg:block">Analytics</span>
-                </a>
-
-                <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2 mt-6 hidden lg:block">Tools</div>
-                <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                    <i class="fa-solid fa-code w-5 text-center"></i>
-                    <span class="hidden lg:block">Developer API</span>
-                </a>
-                <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                    <i class="fa-solid fa-bolt w-5 text-center"></i>
-                    <span class="hidden lg:block">Mass Shrinker</span>
-                </a>
-            </div>
-
-            <!-- User Profile Snippet -->
-            <div class="p-4 border-t border-neutral-200/50 dark:border-white/5">
-                <div class="bg-neutral-100 dark:bg-white/5 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-neutral-200 dark:hover:bg-white/10 transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold">U</div>
-                    <div class="hidden lg:block overflow-hidden">
-                        <div class="text-xs font-bold text-neutral-900 dark:text-white truncate">User_1293</div>
-                        <div class="text-[10px] text-brand-600 dark:text-brand-400 font-mono">Root Access</div>
+                <div class="hidden lg:block overflow-hidden">
+                    <!-- Username with ID -->
+                    <div id="profile-username" class="text-xs font-bold text-neutral-900 dark:text-white truncate">
+                        Loading...
                     </div>
-                    <i class="fa-solid fa-chevron-right text-xs ml-auto text-neutral-400 hidden lg:block"></i>
+                    <!-- Role with ID -->
+                    <div id="profile-role" class="text-[10px] text-brand-600 dark:text-brand-400 font-mono">
+                        Verifying...
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs ml-auto text-neutral-400 hidden lg:block"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-neutral-50 dark:bg-[#020408]">
+        <div class="absolute inset-0 tech-grid opacity-100 pointer-events-none"></div>
+
+        <header class="h-20 px-6 lg:px-10 flex items-center justify-between border-b border-neutral-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md z-20 relative">
+            <div class="flex items-center gap-4">
+                <button class="md:hidden text-neutral-500 dark:text-white"><i class="fa-solid fa-bars text-xl"></i></button>
+                <h1 class="text-lg font-bold text-neutral-800 dark:text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Command Center
+                </h1>
+            </div>
+            <div class="flex items-center gap-6">
+                <button class="hidden sm:flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold shadow-lg shadow-brand-500/20 transition-all hover:-translate-y-0.5 magnetic-btn">
+                    <i class="fa-solid fa-plus"></i> New Link
+                </button>
+                <button id="theme-toggle" class="w-9 h-9 rounded-full bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-brand-600 transition-colors border border-transparent dark:border-white/10">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block"></i>
+                </button>
+            </div>
+        </header>
+
+        <div id="dashboard-content" class="flex-1 overflow-y-auto relative z-10 p-6 lg:p-10 pb-20">
+            <!-- Greeting -->
+            <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 gsap-fade-up">
+                <div>
+                    <p class="text-xs font-mono text-brand-600 dark:text-brand-400 mb-1" id="last-login-text">LAST LOGIN: LOADING...</p>
+                    <h2 class="text-3xl font-extrabold text-neutral-900 dark:text-white">Overview</h2>
+                </div>
+                <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-lg shadow-sm">
+                    <span class="text-xs text-neutral-500">Date Range:</span>
+                    <span class="text-xs font-bold dark:text-white font-mono">Last 30 Days</span>
+                    <i class="fa-solid fa-chevron-down text-xs text-neutral-400 ml-1"></i>
                 </div>
             </div>
-        </aside>
 
-        <!-- --- MAIN CONTENT AREA --- -->
-        <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-neutral-50 dark:bg-[#020408]">
-            
-            <!-- Background Tech Grid -->
-            <div class="absolute inset-0 tech-grid opacity-100 pointer-events-none"></div>
-
-            <!-- Header -->
-            <header class="h-20 px-6 lg:px-10 flex items-center justify-between border-b border-neutral-200/50 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md z-20 relative">
-                <div class="flex items-center gap-4">
-                    <button class="md:hidden text-neutral-500 dark:text-white"><i class="fa-solid fa-bars text-xl"></i></button>
-                    <h1 class="text-lg font-bold text-neutral-800 dark:text-white flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        Command Center
-                    </h1>
-                </div>
-
-                <div class="flex items-center gap-6">
-                    <!-- Quick Create Button -->
-                    <button class="hidden sm:flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold shadow-lg shadow-brand-500/20 transition-all hover:-translate-y-0.5 magnetic-btn">
-                        <i class="fa-solid fa-plus"></i> New Link
-                    </button>
-
-                    <!-- Theme Toggle -->
-                    <button id="theme-toggle" class="w-9 h-9 rounded-full bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-brand-600 transition-colors border border-transparent dark:border-white/10">
-                        <i class="fa-solid fa-moon dark:hidden"></i>
-                        <i class="fa-solid fa-sun hidden dark:block"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Scrollable Content -->
-            <div id="dashboard-content" class="flex-1 overflow-y-auto relative z-10 p-6 lg:p-10 pb-20">
+            <!-- STATS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 
-                <!-- Greeting -->
-                <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 gsap-fade-up">
+                <!-- 1. VIEWS -->
+                <div class="stat-card p-6 gsap-fade-up">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600"><i class="fa-solid fa-eye"></i></div>
+                        <span class="text-xs font-bold text-green-500 flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full"><i class="fa-solid fa-arrow-up"></i> Live</span>
+                    </div>
+                    <!-- ID: val-views -->
+                    <div id="val-views" class="text-2xl font-bold text-neutral-900 dark:text-white font-mono mb-1 skeleton">0</div>
+                    <div class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Total Views</div>
+                </div>
+
+                <!-- 2. EARNINGS -->
+                <div class="stat-card p-6 gsap-fade-up" style="animation-delay: 0.1s">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600"><i class="fa-solid fa-sack-dollar"></i></div>
+                    </div>
+                    <!-- ID: val-earnings -->
+                    <div id="val-earnings" class="text-2xl font-bold text-neutral-900 dark:text-white font-mono mb-1 skeleton">$0.0000</div>
+                    <div class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Total Earnings</div>
+                </div>
+
+                <!-- 3. CPM -->
+                <div class="stat-card p-6 gsap-fade-up" style="animation-delay: 0.2s">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600"><i class="fa-solid fa-chart-line"></i></div>
+                    </div>
+                    <!-- ID: val-cpm -->
+                    <div id="val-cpm" class="text-2xl font-bold text-neutral-900 dark:text-white font-mono mb-1 skeleton">$0.00</div>
+                    <div class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Average CPM</div>
+                </div>
+
+                <!-- 4. BALANCE -->
+                <div class="stat-card p-6 relative overflow-hidden group cursor-pointer border-brand-500/20 gsap-fade-up" style="animation-delay: 0.3s">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-600 to-brand-800 opacity-90 transition-opacity group-hover:opacity-100"></div>
+                    <div class="relative z-10 text-white">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white backdrop-blur-sm"><i class="fa-solid fa-wallet"></i></div>
+                            <button class="text-[10px] font-bold bg-black/30 hover:bg-black/50 px-3 py-1 rounded-full transition-colors backdrop-blur-sm">WITHDRAW</button>
+                        </div>
+                        <!-- ID: val-balance -->
+                        <div id="val-balance" class="text-2xl font-bold font-mono mb-1 skeleton">$0.00</div>
+                        <div class="text-xs text-brand-100 font-medium">Available Balance</div>
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                </div>
+            </div>
+
+            <!-- CHART -->
+            <div class="stat-card p-6 lg:p-8 mb-10 gsap-fade-up" style="animation-delay: 0.4s">
+                <div class="flex items-center justify-between mb-8">
                     <div>
-                        <p class="text-xs font-mono text-brand-600 dark:text-brand-400 mb-1">LAST LOGIN: TODAY 09:42 AM</p>
-                        <h2 class="text-3xl font-extrabold text-neutral-900 dark:text-white">Overview</h2>
+                        <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Revenue Analytics</h3>
+                        <p class="text-xs text-neutral-500 mt-1">Performance over the last 30 days.</p>
                     </div>
-                    <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-lg shadow-sm">
-                        <span class="text-xs text-neutral-500">Date Range:</span>
-                        <span class="text-xs font-bold dark:text-white font-mono">Last 30 Days</span>
-                        <i class="fa-solid fa-chevron-down text-xs text-neutral-400 ml-1"></i>
-                    </div>
-                </div>
-
-                <!-- STATS GRID (HUD) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                    
-                    <!-- Card 1: Views -->
-                    <div class="stat-card p-6 gsap-fade-up">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
-                                <i class="fa-solid fa-eye"></i>
-                            </div>
-                            <span class="text-xs font-bold text-green-500 flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
-                                <i class="fa-solid fa-arrow-up"></i> 12%
-                            </span>
-                        </div>
-                        <div class="text-2xl font-bold text-neutral-900 dark:text-white font-mono mb-1">154,023</div>
-                        <div class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Total Views</div>
-                    </div>
-
-                    <!-- Card 2: Earnings -->
-                    <div class="stat-card p-6 gsap-fade-up" style="animation-delay: 0.1s">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600">
-                                <i class="fa-solid fa-sack-dollar"></i>
-                            </div>
-                            <span class="text-xs font-bold text-green-500 flex items-center gap-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">
-                                <i class="fa-solid fa-arrow-up"></i> 8.4%
-                            </span>
-                        </div>
-                        <div class="text-2xl font-bold text-neutral-900 dark:text-white font-mono mb-1">$1,240.50</div>
-                        <div class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Total Earnings</div>
-                    </div>
-
-                    <!-- Card 3: CPM -->
-                    <div class="stat-card p-6 gsap-fade-up" style="animation-delay: 0.2s">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600">
-                                <i class="fa-solid fa-chart-line"></i>
-                            </div>
-                            <span class="text-xs font-bold text-neutral-400 flex items-center gap-1 bg-neutral-100 dark:bg-white/5 px-2 py-1 rounded-full">
-                                <i class="fa-solid fa-minus"></i> 0%
-                            </span>
-                        </div>
-                        <div class="text-2xl font-bold text-neutral-900 dark:text-white font-mono mb-1">$8.05</div>
-                        <div class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Average CPM</div>
-                    </div>
-
-                    <!-- Card 4: Wallet Balance -->
-                    <div class="stat-card p-6 relative overflow-hidden group cursor-pointer border-brand-500/20 gsap-fade-up" style="animation-delay: 0.3s">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand-600 to-brand-800 opacity-90 transition-opacity group-hover:opacity-100"></div>
-                        <div class="relative z-10 text-white">
-                            <div class="flex justify-between items-start mb-4">
-                                <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white backdrop-blur-sm">
-                                    <i class="fa-solid fa-wallet"></i>
-                                </div>
-                                <button class="text-[10px] font-bold bg-black/30 hover:bg-black/50 px-3 py-1 rounded-full transition-colors backdrop-blur-sm">
-                                    WITHDRAW
-                                </button>
-                            </div>
-                            <div class="text-2xl font-bold font-mono mb-1">$482.00</div>
-                            <div class="text-xs text-brand-100 font-medium">Available Balance</div>
-                        </div>
-                        <!-- Decorative circle -->
-                        <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 text-xs font-bold rounded bg-brand-500 text-white">Revenue</button>
+                        <button class="px-3 py-1 text-xs font-bold rounded text-neutral-500 hover:bg-neutral-100 dark:hover:bg-white/5">CPM</button>
                     </div>
                 </div>
-
-                <!-- MAIN ANALYTICS CHART -->
-                <div class="stat-card p-6 lg:p-8 mb-10 gsap-fade-up" style="animation-delay: 0.4s">
-                    <div class="flex items-center justify-between mb-8">
-                        <div>
-                            <h3 class="text-lg font-bold text-neutral-900 dark:text-white">Revenue Analytics</h3>
-                            <p class="text-xs text-neutral-500 mt-1">Performance over the last 30 days.</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button class="px-3 py-1 text-xs font-bold rounded bg-brand-500 text-white">Revenue</button>
-                            <button class="px-3 py-1 text-xs font-bold rounded text-neutral-500 hover:bg-neutral-100 dark:hover:bg-white/5">CPM</button>
-                        </div>
-                    </div>
-                    
-                    <div class="w-full h-[350px] relative">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- BOTTOM GRID -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Top Links -->
-                    <div class="lg:col-span-2 stat-card p-6 gsap-fade-up" style="animation-delay: 0.5s">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wide">Top Performing Links</h3>
-                            <a href="#" class="text-xs text-brand-600 hover:underline">View All</a>
-                        </div>
-                        <div class="space-y-4">
-                            <!-- Item 1 -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors group">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <div class="w-8 h-8 rounded bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-500 text-xs">
-                                        1
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <div class="text-sm font-bold dark:text-white truncate w-48 md:w-auto">Game_Config_v2.zip</div>
-                                        <div class="text-[10px] text-brand-600 font-mono">shortmylink.in/x9Jk2</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-bold dark:text-white font-mono">12,402</div>
-                                    <div class="text-[10px] text-neutral-500">Views</div>
-                                </div>
-                            </div>
-                            <!-- Item 2 -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors group">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <div class="w-8 h-8 rounded bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-500 text-xs">
-                                        2
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <div class="text-sm font-bold dark:text-white truncate w-48 md:w-auto">Viral_Video_2024.mp4</div>
-                                        <div class="text-[10px] text-brand-600 font-mono">shortmylink.in/mK29a</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-bold dark:text-white font-mono">8,100</div>
-                                    <div class="text-[10px] text-neutral-500">Views</div>
-                                </div>
-                            </div>
-                            <!-- Item 3 -->
-                            <div class="flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors group">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <div class="w-8 h-8 rounded bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-500 text-xs">
-                                        3
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <div class="text-sm font-bold dark:text-white truncate w-48 md:w-auto">Premium_Course_Leak</div>
-                                        <div class="text-[10px] text-brand-600 font-mono">shortmylink.in/p02L1</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-bold dark:text-white font-mono">5,320</div>
-                                    <div class="text-[10px] text-neutral-500">Views</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- System Health / Announcements -->
-                    <div class="stat-card p-6 bg-gradient-to-b from-neutral-900 to-black border-neutral-800 text-white lg:col-span-1 gsap-fade-up" style="animation-delay: 0.6s">
-                        <h3 class="text-sm font-bold uppercase tracking-wide mb-6 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span> System Status
-                        </h3>
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <div class="flex justify-between text-xs mb-2 text-neutral-400">
-                                    <span>Server Load</span>
-                                    <span class="text-green-400 font-mono">34%</span>
-                                </div>
-                                <div class="w-full bg-white/10 rounded-full h-1.5">
-                                    <div class="bg-green-500 h-1.5 rounded-full" style="width: 34%"></div>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <div class="flex justify-between text-xs mb-2 text-neutral-400">
-                                    <span>Payment Gateway</span>
-                                    <span class="text-green-400 font-mono">Operational</span>
-                                </div>
-                                <div class="flex gap-1">
-                                    <div class="flex-1 h-1 bg-green-500 rounded-full opacity-100"></div>
-                                    <div class="flex-1 h-1 bg-green-500 rounded-full opacity-100"></div>
-                                    <div class="flex-1 h-1 bg-green-500 rounded-full opacity-100"></div>
-                                    <div class="flex-1 h-1 bg-green-500 rounded-full opacity-50"></div>
-                                </div>
-                            </div>
-
-                            <div class="p-4 bg-white/5 rounded-lg border border-white/5 mt-6">
-                                <div class="text-[10px] font-bold text-brand-400 uppercase mb-1">New Announcement</div>
-                                <p class="text-xs text-neutral-300 leading-relaxed">
-                                    CPM rates for <strong>Tier 1 Countries</strong> have been increased by 15% for the upcoming weekend. 
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
+                <div class="w-full h-[350px] relative"><canvas id="revenueChart"></canvas></div>
             </div>
-        </main>
+        </div>
+    </main>
 
-        <!-- Lenis & GSAP -->
-        <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script> 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                
-                // --- 1. DARK MODE & TRANSITIONS ---
-                const themeToggleBtn = document.getElementById('theme-toggle');
-                
-                // Check LocalStorage
-                try {
-                    const savedTheme = localStorage.getItem('theme');
-                    if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-                    else if (savedTheme === 'light') document.documentElement.classList.remove('dark');
-                } catch (e) {}
-
-                function toggleTheme(event) {
-                    const x = event?.clientX ?? innerWidth / 2;
-                    const y = event?.clientY ?? innerHeight / 2;
-
-                    if (!document.startViewTransition) {
-                        const isDark = document.documentElement.classList.toggle('dark');
-                        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                        updateChartTheme(); // Update chart on theme switch
-                        return;
-                    }
-
-                    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-                    const transition = document.startViewTransition(() => {
-                        document.documentElement.classList.toggle('dark');
-                        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-                        updateChartTheme(); // Update chart logic
-                    });
-
-                    transition.ready.then(() => {
-                        document.documentElement.animate(
-                            { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
-                            { duration: 600, easing: 'ease-out', pseudoElement: '::view-transition-new(root)' }
-                        );
-                    });
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // --- 1. DYNAMIC USER PROFILE ---
+            const username = localStorage.getItem('current_username');
+            const userRole = localStorage.getItem('user_role');
+            
+            if(username) {
+                document.getElementById('profile-username').innerText = username;
+                document.getElementById('profile-role').innerText = (userRole === 'ROOT_ADMIN') ? "Administrator" : "Publisher";
+                if(userRole === 'ROOT_ADMIN') {
+                    document.getElementById('profile-avatar').classList.add('bg-red-500');
+                    document.getElementById('profile-avatar').innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
                 }
-                if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+            } else {
+                // Not logged in? Redirect
+                window.location.href = 'login.html';
+            }
 
-                // --- 2. LENIS SMOOTH SCROLL (On the content div) ---
-                const contentDiv = document.getElementById('dashboard-content');
-                if (typeof Lenis !== 'undefined') {
-                    const lenis = new Lenis({
-                        wrapper: contentDiv, // Target the div, not window
-                        content: contentDiv,
-                        duration: 1.2,
-                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                        smooth: true,
-                    });
-                    function raf(time) { lenis.raf(time * 1000); requestAnimationFrame(raf); }
-                    requestAnimationFrame(raf);
-                }
-
-                // --- 3. GSAP ENTRANCE ---
-                gsap.from(".gsap-fade-up", {
-                    y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.2
-                });
-
-                // --- 4. CHART.JS IMPLEMENTATION (Past 30 Days) ---
-                const ctx = document.getElementById('revenueChart').getContext('2d');
-                
-                // Generate Last 30 Days Labels
-                const labels = [];
-                const dataPoints = [];
-                for(let i=29; i>=0; i--) {
-                    const d = new Date();
-                    d.setDate(d.getDate() - i);
-                    labels.push(d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }));
-                    // Random realistic data trend
-                    let val = 30 + Math.random() * 20; 
-                    if (i < 10) val += 20; // Increase recent days
-                    dataPoints.push(val.toFixed(2));
-                }
-
-                let myChart;
-
-                function initChart() {
-                    const isDark = document.documentElement.classList.contains('dark');
-                    const brandColor = '#10b981'; // Emerald 500
+            // --- 2. FETCH REAL DATA ---
+            fetch('api/dashboard_data.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    const ov = data.overview;
                     
-                    // Create Gradient
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.5)'); // Top opacity
-                    gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)'); // Bottom transparency
+                    // Update Text
+                    updateStat('val-views', ov.views);
+                    updateStat('val-earnings', '$' + ov.earnings);
+                    updateStat('val-cpm', '$' + ov.cpm);
+                    updateStat('val-balance', '$' + ov.balance);
+                    document.getElementById('last-login-text').innerText = "LAST LOGIN: " + ov.last_login.toUpperCase();
 
-                    const config = {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Revenue ($)',
-                                data: dataPoints,
-                                borderColor: brandColor,
-                                backgroundColor: gradient,
-                                borderWidth: 3,
-                                tension: 0.4, // Smooth curves
-                                pointRadius: 0,
-                                pointHoverRadius: 6,
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: brandColor,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: { intersect: false, mode: 'index' },
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: isDark ? '#000' : '#fff',
-                                    titleColor: isDark ? '#fff' : '#000',
-                                    bodyColor: isDark ? '#ccc' : '#666',
-                                    borderColor: isDark ? '#333' : '#eee',
-                                    borderWidth: 1,
-                                    padding: 10,
-                                    displayColors: false,
-                                    callbacks: { label: (context) => `$${context.parsed.y}` }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    grid: { display: false, drawBorder: false },
-                                    ticks: { color: isDark ? '#666' : '#aaa', font: { family: 'JetBrains Mono', size: 10 }, maxTicksLimit: 7 }
-                                },
-                                y: {
-                                    grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', borderDash: [5, 5] },
-                                    ticks: { color: isDark ? '#666' : '#aaa', font: { family: 'JetBrains Mono', size: 10 }, callback: (val) => '$' + val },
-                                    border: { display: false }
-                                }
-                            },
-                            animation: {
-                                y: { duration: 2000, easing: 'easeOutQuart' } // "Draw" animation
-                            }
-                        }
-                    };
-
-                    if(myChart) myChart.destroy();
-                    myChart = new Chart(ctx, config);
+                    // Render Chart with Real Data
+                    initChart(data.chart.labels, data.chart.data);
+                } else {
+                    console.warn("API Data Error:", data.message);
+                    // Show empty chart on error/new user
+                    initChart(['No Data'], [0]);
                 }
-
-                // Initial Render
-                initChart();
-
-                // Update Chart on Theme Toggle
-                function updateChartTheme() {
-                    setTimeout(initChart, 100); // Small delay to wait for class change
-                }
+            })
+            .catch(err => {
+                console.error("API Failure (Offline Mode?):", err);
+                initChart(['No Data'], [0]); 
             });
-        </script>
-    </body>
-    </html>
+
+            // Helper to remove skeleton
+            function updateStat(id, value) {
+                const el = document.getElementById(id);
+                el.innerText = value;
+                el.classList.remove('skeleton');
+            }
+
+            // --- 3. CHART CONFIG ---
+            function initChart(labels, dataPoints) {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const isDark = document.documentElement.classList.contains('dark');
+                const brandColor = '#10b981';
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
+                gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Earnings ($)', 
+                            data: dataPoints, 
+                            borderColor: brandColor, 
+                            backgroundColor: gradient,
+                            borderWidth: 3, 
+                            tension: 0.4, 
+                            fill: true, 
+                            pointRadius: 0, 
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: isDark ? '#666' : '#aaa' } },
+                            y: { grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }, ticks: { color: isDark ? '#666' : '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // --- 4. UI ANIMATIONS ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            if(themeToggleBtn) themeToggleBtn.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                location.reload();
+            });
+
+            if (typeof gsap !== 'undefined') {
+                gsap.from(".gsap-fade-up", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.2 });
+            }
+        });
+    </script>
+</body>
+</html>
