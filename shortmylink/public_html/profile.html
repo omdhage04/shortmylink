@@ -311,6 +311,7 @@
             btn.classList.add('opacity-75');
 
             const payload = {
+                username: localStorage.getItem('current_username') || '',
                 first_name: document.getElementById('fname').value,
                 last_name: document.getElementById('lname').value,
                 bio: document.getElementById('bio').value
@@ -323,12 +324,12 @@
             })
             .then(res => res.json())
             .then(data => {
-                // Simulate Success
-                setTimeout(() => {
+                // Check server response before indicating success
+                if (data && data.status === 'success') {
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
                     btn.classList.remove('bg-brand-600', 'hover:bg-brand-700');
                     btn.classList.add('bg-green-500', 'hover:bg-green-600');
-                    
+
                     // Reset button after 2 seconds
                     setTimeout(() => {
                         btn.innerHTML = originalHTML;
@@ -337,14 +338,21 @@
                         btn.disabled = false;
                         btn.classList.remove('opacity-75');
                     }, 2000);
-                }, 800);
+                } else {
+                    // Show error state and restore button
+                    console.error('Update failed:', data);
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75');
+                    alert((data && data.message) ? data.message : 'Update failed');
+                }
             })
-            .catch(() => {
-                // Mock Success behavior
-                 setTimeout(() => {
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
-                    setTimeout(() => { btn.innerHTML = originalHTML; btn.disabled = false; btn.classList.remove('opacity-75'); }, 2000);
-                }, 800);
+            .catch((err) => {
+                console.error('Network or server error', err);
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+                alert('Unable to save changes. Please try again later.');
             });
         }
         
