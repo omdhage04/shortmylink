@@ -5,7 +5,7 @@
 define('DB_HOST', 'localhost');   // Hostinger MySQL host from your screenshot
 define('DB_NAME', 'u545014911_UserInfo');
 define('DB_USER', 'u545014911_user_info');
-define('DB_PASS', '#Dhage@3005'); // your DB password
+define('DB_PASS',   '); // your DB password
 
 // Correct error log path (secure_config/db_connect.php -> go up two levels)
 $LOG_PATH = __DIR__ . '/../../logs/error.log';

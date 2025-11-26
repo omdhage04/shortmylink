@@ -143,10 +143,13 @@
 
                     <a href="payouts.html" class="text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Payout Rates</a>
                     
-                    <div class="flex items-center space-x-4 ml-2">
+                    <div id="auth-section-index" class="flex items-center space-x-4 ml-2">
                         <a href="login.html" class="text-sm font-bold text-neutral-900 dark:text-white hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Log In</a>
                         <a href="signup.html" class="magnetic-btn bg-neutral-900 dark:bg-white hover:bg-brand-700 dark:hover:bg-brand-400 text-white dark:text-black px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-brand-900/30 border border-transparent">Sign Up</a>
                     </div>
+                    <button id="my-account-btn-index" class="hidden items-center gap-2 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-brand-600/30">
+                        <i class="fa-solid fa-user"></i> My Account
+                    </button>
                 </div>
 
                 <div class="md:hidden flex items-center gap-4">
@@ -164,8 +167,13 @@
         <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-[#111] border-t border-neutral-100 dark:border-white/10 absolute w-full shadow-xl">
             <div class="px-4 pt-2 pb-6 space-y-2">
                 <a href="features.html" class="block px-3 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-white/5 hover:text-brand-700 rounded-lg">Features</a>
-                <a href="login.html" class="block px-3 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-white/5 hover:text-brand-700 rounded-lg">Login</a>
-                <a href="signup.html" class="block px-3 py-3 text-sm font-bold text-center text-white bg-brand-700 rounded-lg shadow-md">Sign Up Free</a>
+                <div id="mobile-auth-section-index">
+                    <a href="login.html" class="block px-3 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-white/5 hover:text-brand-700 rounded-lg">Login</a>
+                    <a href="signup.html" class="block px-3 py-3 text-sm font-bold text-center text-white bg-brand-700 rounded-lg shadow-md">Sign Up Free</a>
+                </div>
+                <button id="mobile-my-account-btn-index" class="hidden w-full px-3 py-3 text-sm font-bold text-center text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-md transition-all">
+                    <i class="fa-solid fa-user mr-2"></i>Go to Dashboard
+                </button>
             </div>
         </div>
     </nav>
@@ -405,6 +413,32 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            
+            // --- CHECK IF USER IS LOGGED IN ---
+            const currentUsername = localStorage.getItem('current_username');
+            const authSectionIndex = document.getElementById('auth-section-index');
+            const myAccountBtn = document.getElementById('my-account-btn-index');
+            const mobileAuthSection = document.getElementById('mobile-auth-section-index');
+            const mobileMyAccountBtn = document.getElementById('mobile-my-account-btn-index');
+            
+            if(currentUsername) {
+                // User is logged in - hide login/signup, show my account
+                if(authSectionIndex) authSectionIndex.classList.add('hidden');
+                if(myAccountBtn) {
+                    myAccountBtn.classList.remove('hidden');
+                    myAccountBtn.classList.add('flex');
+                    myAccountBtn.addEventListener('click', () => {
+                        window.location.href = 'dashboard.html';
+                    });
+                }
+                if(mobileAuthSection) mobileAuthSection.classList.add('hidden');
+                if(mobileMyAccountBtn) {
+                    mobileMyAccountBtn.classList.remove('hidden');
+                    mobileMyAccountBtn.addEventListener('click', () => {
+                        window.location.href = 'dashboard.html';
+                    });
+                }
+            }
             
             // --- HEAVENLY DARK MODE LOGIC (View Transitions API) ---
             const themeToggleBtn = document.getElementById('theme-toggle');
