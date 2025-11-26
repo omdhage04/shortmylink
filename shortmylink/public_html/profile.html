@@ -68,10 +68,8 @@
 
         /* Form Elements Matching Login */
         .premium-input {
-
-
-            
-            width: 100%; px-4; py-3; 
+            width: 100%; 
+            padding: 0.75rem 1rem;
             background-color: #f8fafc; 
             border: 1px solid #e2e8f0; 
             border-radius: 0.75rem; 
@@ -371,28 +369,6 @@
             }
         });
 
-        // --- LOGOUT HANDLER ---
-        const logoutBtn = document.getElementById('logout-btn');
-        if(logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                if(confirm('Are you sure you want to logout?')) {
-                    fetch('api/logout.php', { method: 'POST' })
-                        .then(() => {
-                            localStorage.removeItem('current_username');
-                            localStorage.removeItem('user_role');
-                            localStorage.removeItem('api_token');
-                            window.location.href = 'login.html';
-                        })
-                        .catch(err => {
-                            console.error('Logout error:', err);
-                            localStorage.removeItem('current_username');
-                            localStorage.removeItem('user_role');
-                            localStorage.removeItem('api_token');
-                            window.location.href = 'login.html';
-                        });
-                }
-            });
-        }
     </script>
 </body>
 </html>

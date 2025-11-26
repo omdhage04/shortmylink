@@ -108,8 +108,7 @@
     <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden backdrop-blur-sm transition-opacity opacity-0"></div>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar-glass w-20 lg:w-64 h-full flex flex-col fixed lg:relative z-30 transition-all duration-300 hidden md:flex">
-        
+    <aside id="sidebar" class="sidebar-glass fixed md:relative inset-y-0 left-0 z-30 w-64 h-full flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl md:shadow-none">
         <div class="h-20 flex items-center justify-between px-6 md:px-0 md:justify-center lg:justify-start lg:px-8 border-b border-neutral-200/50 dark:border-white/5">
             <div class="flex items-center">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-800 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-900/20 shrink-0">
@@ -117,7 +116,6 @@
                 </div>
                 <span class="font-bold text-xl ml-3 block tracking-tight text-neutral-900 dark:text-white">shortmylink</span>
             </div>
-            <!-- Mobile Close Button -->
             <button id="close-sidebar" class="md:hidden text-neutral-500 dark:text-neutral-400 hover:text-brand-500">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -125,30 +123,42 @@
 
         <div class="flex-1 overflow-y-auto py-6 space-y-2 px-3">
             <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2">Main Interface</div>
-            
-            <a href="dashboard.html" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-brand-600 dark:text-brand-400">
+
+            <a href="dashboard.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
                 <i class="fa-solid fa-grid-2 w-5 text-center"></i><span>Dashboard</span>
             </a>
-            
-            <a href="manage_links.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+
+            <a href="manage_links.html" class="nav-item active flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-brand-600 dark:text-brand-400">
                 <i class="fa-solid fa-link w-5 text-center"></i><span>Manage Links</span>
             </a>
-            <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                <i class="fa-solid fa-wallet w-5 text-center"></i><span class="hidden lg:block">Payments</span>
+
+            <a href="payments.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-wallet w-5 text-center"></i><span>Payments</span>
             </a>
-            
+
             <a href="analytics.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
-                <i class="fa-solid fa-chart-pie w-5 text-center"></i><span class="hidden lg:block">Analytics</span>
+                <i class="fa-solid fa-chart-pie w-5 text-center"></i><span>Analytics</span>
             </a>
-            <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2 mt-6 hidden lg:block">Tools</div>
+
+            <a href="partner.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-handshake w-5 text-center"></i><span>Be Partner</span>
+            </a>
+
+            <a href="advertise.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-bullhorn w-5 text-center"></i><span>Ad Manager</span>
+            </a>
+            <a href="publishad.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-bullhorn w-5 text-center"></i><span>Publish your Ad</span>
+            </a>
+
+            <a href="support.html" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
+                <i class="fa-solid fa-headset w-5 text-center"></i><span>Support & Helpline</span>
+            </a>
+
+            <div class="text-[10px] font-bold text-neutral-400 uppercase px-4 mb-2 mt-6">Tools</div>
             <a href="#" class="nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400">
                 <i class="fa-solid fa-code w-5 text-center"></i><span>Developer API</span>
             </a>
-
-            <!-- LOGOUT BUTTON -->
-            <button onclick="logout()" class="w-full nav-item flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors mt-2 text-left">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i><span>Log Out</span>
-            </button>
         </div>
 
         <div class="p-4 border-t border-neutral-200/50 dark:border-white/5">
@@ -377,45 +387,7 @@
                 gsap.from(".gsap-fade-up", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.2 });
             }
 
-            // --- LOGOUT HANDLER ---
-            const logoutBtn = document.getElementById('logout-btn');
-            if(logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    if(confirm('Are you sure you want to logout?')) {
-                        fetch('api/logout.php', { method: 'POST' })
-                            .then(() => {
-                                localStorage.removeItem('current_username');
-                                localStorage.removeItem('user_role');
-                                localStorage.removeItem('api_token');
-                                window.location.href = 'login.html';
-                            })
-                            .catch(err => {
-                                console.error('Logout error:', err);
-                                // Clear local storage anyway and redirect
-                                localStorage.removeItem('current_username');
-                                localStorage.removeItem('user_role');
-                                localStorage.removeItem('api_token');
-                                window.location.href = 'login.html';
-                            });
-                    }
-                });
-            }
         });
-
-        // LOGOUT FUNCTION (Using ui.js)
-        function logout() {
-            confirmAction({
-                title: 'Log Out?',
-                text: 'You will be redirected to the login page.',
-                isDanger: true,
-                btnText: 'Log Out'
-            }, () => {
-                localStorage.removeItem('current_username');
-                localStorage.removeItem('user_role');
-                document.cookie = "shortmylink_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                window.location.href = 'index.html';
-            });
-        }
     </script>
 </body>
 </html>
