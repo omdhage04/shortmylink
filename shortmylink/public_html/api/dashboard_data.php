@@ -1,6 +1,17 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../secure_config/db_connect.php';
+header("Access-Control-Allow-Origin: *"); // Added for safety
+header("Access-Control-Allow-Methods: POST");
+
+// Hide system errors, log them internally
+ini_set('display_errors', 0);
+
+try {
+    require_once __DIR__ . '/../../secure_config/db_connect.php';
+} catch (Exception $e) {
+    echo json_encode(['status' => 'error', 'message' => 'Config Error']);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
@@ -12,9 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // 1. Get User Info
-        $stmt = $pdo->prepare("SELECT id, wallet_balance, last_login_at FROM users WHERE username = ?");
-        $stmt->execute([$username]);
+        // 1. Get User Info (UPDATED: Checks Username OR Email)
+        $stmt = $pdo->prepare("SELECT id, wallet_balance, last_login_at FROM users WHERE username = ? OR email = ?");
+        $stmt->execute([$username, $username]);
         $user = $stmt->fetch();
 
         if (!$user) {
@@ -24,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $userId = $user['id'];
 
-        // 2. Get Totals (FIX: Force 0 if NULL)
+        // 2. Get Totals (Using COALESCE to handle NULLs for new users)
         $stmt = $pdo->prepare("
             SELECT 
                 COALESCE(SUM(total_views), 0) as total_views, 
@@ -34,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$userId]);
         $stats = $stmt->fetch();
 
-        $views = $stats['total_views']; // Now guaranteed to be 0, not null
-        $earnings = $stats['total_earnings'];
+        $views = $stats['total_views'];
+        $earnings = $user['wallet_balance']; // Better to show Wallet Balance as "Total Earnings" on dashboard
         
         // Avoid Division by Zero for CPM
         $avgCpm = ($views > 0) ? ($earnings / $views) * 1000 : 0;
@@ -55,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$userId]);
         $chartData = $stmt->fetchAll();
 
-        // Format Chart (Fill empty days with 0 if needed, or just send what we have)
+        // Format Chart
         $labels = [];
         $dataPoints = [];
         
         if (empty($chartData)) {
-            // FIX: Send empty chart data if no clicks
+            // Fallback: Show last 7 days with 0 data so chart isn't empty
             for ($i = 6; $i >= 0; $i--) {
                 $labels[] = date('M d', strtotime("-$i days"));
                 $dataPoints[] = 0;
@@ -88,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
     } catch (Exception $e) {
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        echo json_encode(['status' => 'error', 'message' => 'System Error']); // Don't show raw SQL error
     }
 }
 ?>

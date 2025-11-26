@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console | ShortMyLink</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        
+        /* THE WATCHER (Sidebar Mascot) */
+        .mascot-container { position: relative; width: 80px; height: 80px; margin: 0 auto 20px; }
+        .char-head {
+            width: 100%; height: 100%; background: #000;
+            border-radius: 50% 50% 40% 40%;
+            position: relative;
+        }
+        .char-eyes {
+            position: absolute; top: 35%; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px;
+        }
+        .eye-white {
+            width: 18px; height: 18px; background: #fff; border-radius: 50%;
+            position: relative; overflow: hidden;
+        }
+        .pupil {
+            width: 8px; height: 8px; background: #000; border-radius: 50%;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* CARDS */
+        .admin-card {
+            background: white; border: 1px solid #e2e8f0; border-radius: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .admin-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
+
+        /* TABLES */
+        th { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; color: #64748b; font-weight: 700; }
+        td { font-size: 0.875rem; font-weight: 500; }
+        
+        /* BUTTONS */
+        .btn-black { background: #000; color: #fff; transition: transform 0.1s; }
+        .btn-black:hover { transform: scale(1.02); }
+        .btn-action:hover { background: #f1f5f9; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR (Black Style) -->
+    <aside class="w-64 bg-white border-r border-neutral-200 flex flex-col z-20">
+        <div class="h-20 flex items-center justify-center border-b border-neutral-100">
+            <span class="font-extrabold text-xl tracking-tight">shortmylink<span class="text-neutral-400">.admin</span></span>
+        </div>
+
+        <!-- The Watcher Mascot -->
+        <div class="pt-8 pb-4 text-center">
+            <div class="mascot-container">
+                <div class="char-head">
+                    <div class="char-eyes">
+                        <div class="eye-white"><div class="pupil target-pupil"></div></div>
+                        <div class="eye-white"><div class="pupil target-pupil"></div></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs font-bold text-neutral-400 uppercase tracking-widest">System Monitor</p>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <a href="#" onclick="switchTab('overview')" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-black text-white font-bold text-sm shadow-lg shadow-neutral-200">
+                <i class="fa-solid fa-grid-2"></i> Overview
+            </a>
+            <a href="#" onclick="switchTab('users')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-600 font-bold text-sm hover:bg-neutral-50 transition">
+                <i class="fa-solid fa-users"></i> User Database
+            </a>
+            <a href="#" onclick="switchTab('approvals')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-600 font-bold text-sm hover:bg-neutral-50 transition">
+                <i class="fa-solid fa-check-double"></i> Approvals <span id="nav-badge" class="ml-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full hidden">0</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-600 font-bold text-sm hover:bg-neutral-50 transition">
+                <i class="fa-solid fa-crown text-yellow-500"></i> Elite Partners
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-neutral-100">
+            <button onclick="logout()" class="w-full py-3 rounded-xl border border-neutral-200 text-neutral-600 font-bold text-sm hover:bg-neutral-50">
+                Log Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col overflow-hidden relative bg-[#f8fafc]">
+        
+        <!-- Top Bar -->
+        <header class="h-20 px-8 flex items-center justify-between bg-white/80 backdrop-blur-md border-b border-neutral-200 sticky top-0 z-10">
+            <div>
+                <h1 class="text-xl font-extrabold text-neutral-900" id="page-title">Dashboard Overview</h1>
+                <p class="text-xs text-neutral-500 font-medium" id="last-updated">Live Data Connection</p>
+            </div>
+            <button onclick="refreshData()" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-600 hover:rotate-180 transition duration-500 shadow-sm">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            
+            <!-- STATS ROW -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <!-- Total Users -->
+                <div class="admin-card p-6 flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-neutral-400 uppercase">Total Users</span>
+                        <i class="fa-solid fa-users text-neutral-300"></i>
+                    </div>
+                    <div class="text-4xl font-extrabold text-neutral-900" id="stat-users">...</div>
+                </div>
+
+                <!-- Active Users -->
+                <div class="admin-card p-6 flex flex-col justify-between h-32 border-l-4 border-l-green-500">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-neutral-400 uppercase">Active (30d)</span>
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    </div>
+                    <div class="text-4xl font-extrabold text-neutral-900" id="stat-active">...</div>
+                </div>
+
+                <!-- Revenue -->
+                <div class="admin-card p-6 flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-neutral-400 uppercase">Total Revenue</span>
+                        <i class="fa-solid fa-sack-dollar text-neutral-300"></i>
+                    </div>
+                    <div class="text-4xl font-extrabold text-neutral-900" id="stat-revenue">...</div>
+                </div>
+
+                <!-- Clicks -->
+                <div class="admin-card p-6 flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-neutral-400 uppercase">Link Clicks</span>
+                        <i class="fa-solid fa-arrow-pointer text-neutral-300"></i>
+                    </div>
+                    <div class="text-4xl font-extrabold text-neutral-900" id="stat-clicks">...</div>
+                </div>
+            </div>
+
+            <!-- CONTENT GRID -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- LEFT: USER LIST (Large) -->
+                <div class="lg:col-span-2 admin-card overflow-hidden flex flex-col h-[500px]">
+                    <div class="p-6 border-b border-neutral-100 flex justify-between items-center bg-white sticky top-0">
+                        <h3 class="font-bold text-lg">Recent Users</h3>
+                        <input type="text" placeholder="Search username..." class="bg-neutral-50 border-none rounded-lg px-4 py-2 text-xs font-bold focus:ring-0 w-48">
+                    </div>
+                    <div class="overflow-y-auto flex-1">
+                        <table class="w-full text-left">
+                            <thead class="bg-neutral-50 sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-3">User</th>
+                                    <th class="px-6 py-3">Role</th>
+                                    <th class="px-6 py-3">Links</th>
+                                    <th class="px-6 py-3">Wallet</th>
+                                    <th class="px-6 py-3">Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-table-body" class="divide-y divide-neutral-100">
+                                <!-- JS Injects Rows Here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PENDING ACTIONS -->
+                <div class="flex flex-col gap-6">
+                    
+                    <!-- Pending Payouts -->
+                    <div class="admin-card p-6 flex-1 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg">Pending Payouts</h3>
+                            <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full font-bold" id="payout-count">0</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="payout-list">
+                            <!-- Payout Items -->
+                            <div class="text-center text-neutral-400 text-xs py-10">No pending payouts</div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Ads -->
+                    <div class="admin-card p-6 flex-1 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg">Ad Reviews</h3>
+                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-bold" id="ad-count">0</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="ad-list">
+                            <!-- Ad Items -->
+                            <div class="text-center text-neutral-400 text-xs py-10">No pending ads</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'api/admin.php';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check Auth
+            if(localStorage.getItem('user_role') !== 'ROOT_ADMIN') {
+                window.location.href = 'admin_login.html';
+                return;
+            }
+            
+            // Mascot Eye Tracking
+            document.addEventListener('mousemove', (e) => {
+                document.querySelectorAll('.target-pupil').forEach(p => {
+                    const r = p.getBoundingClientRect();
+                    const x = (e.clientX - r.left) / 15; // Faster movement
+                    const y = (e.clientY - r.top) / 15;
+                    p.style.transform = `translate(${Math.min(Math.max(x,-4),4)}px, ${Math.min(Math.max(y,-4),4)}px)`;
+                });
+            });
+
+            refreshData();
+        });
+
+        async function refreshData() {
+            document.getElementById('last-updated').innerText = 'Fetching data...';
+            
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'get_dashboard_data' }) });
+                const data = await res.json();
+
+                if(data.status === 'success') {
+                    // 1. Stats
+                    animateValue('stat-users', data.stats.total_users);
+                    animateValue('stat-active', data.stats.active_users);
+                    document.getElementById('stat-revenue').innerText = '$' + data.stats.total_revenue;
+                    animateValue('stat-clicks', data.stats.total_clicks);
+
+                    // 2. Users Table
+                    renderUsers(data.users);
+
+                    // 3. Pending Lists
+                    renderPayouts(data.payouts);
+                    renderAds(data.ads);
+
+                    document.getElementById('last-updated').innerText = 'Updated: ' + new Date().toLocaleTimeString();
+                }
+            } catch(e) {
+                console.error(e);
+                document.getElementById('last-updated').innerText = 'Connection Failed';
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('user-table-body');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                tbody.innerHTML += `
+                <tr class="hover:bg-neutral-50 cursor-pointer group" onclick="alert('User ID: ${u.id}')">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-sm text-neutral-900">${u.username}</div>
+                        <div class="text-xs text-neutral-500">${u.email}</div>
+                    </td>
+                    <td class="px-6 py-4"><span class="text-[10px] font-bold uppercase px-2 py-1 rounded-full ${u.role === 'admin' ? 'bg-black text-white' : 'bg-neutral-100 text-neutral-600'}">${u.role}</span></td>
+                    <td class="px-6 py-4 font-mono text-xs font-bold">${u.links_count}</td>
+                    <td class="px-6 py-4 font-mono text-xs font-bold text-green-600">$${u.wallet_balance}</td>
+                    <td class="px-6 py-4 text-xs text-neutral-400">${u.joined}</td>
+                </tr>`;
+            });
+        }
+
+        function renderPayouts(list) {
+            const container = document.getElementById('payout-list');
+            document.getElementById('payout-count').innerText = list.length;
+            container.innerHTML = list.length ? '' : '<div class="text-center text-neutral-400 text-xs py-10">No pending payouts</div>';
+
+            list.forEach(p => {
+                container.innerHTML += `
+                <div class="p-3 rounded-xl border border-neutral-200 bg-white flex justify-between items-center shadow-sm hover:shadow-md transition">
+                    <div>
+                        <div class="text-sm font-bold">${p.username}</div>
+                        <div class="text-xs text-neutral-500">${p.method} • <span class="text-green-600 font-bold">$${p.amount}</span></div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="action('approve_payout', ${p.id})" class="w-8 h-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center"><i class="fa-solid fa-check"></i></button>
+                        <button onclick="action('reject_payout', ${p.id})" class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function renderAds(list) {
+            const container = document.getElementById('ad-list');
+            document.getElementById('ad-count').innerText = list.length;
+            container.innerHTML = list.length ? '' : '<div class="text-center text-neutral-400 text-xs py-10">No pending ads</div>';
+
+            list.forEach(ad => {
+                container.innerHTML += `
+                <div class="p-3 rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="text-xs font-bold uppercase text-neutral-500">${ad.ad_type}</div>
+                        ${ad.is_adult == 1 ? '<span class="text-[10px] bg-red-100 text-red-600 px-2 rounded font-bold">18+</span>' : ''}
+                    </div>
+                    <div class="text-sm font-bold mb-1 truncate">${ad.advertiser_name}</div>
+                    <a href="${ad.destination_url}" target="_blank" class="text-xs text-blue-600 hover:underline truncate block mb-3">${ad.destination_url}</a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="action('approve_ad', ${ad.id})" class="py-1.5 rounded-lg bg-black text-white text-xs font-bold hover:bg-neutral-800">Approve</button>
+                        <button onclick="action('reject_ad', ${ad.id})" class="py-1.5 rounded-lg bg-neutral-100 text-neutral-600 text-xs font-bold hover:bg-neutral-200">Reject</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        async function action(type, id) {
+            if(!confirm("Confirm action?")) return;
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: type, id: id }) });
+                refreshData();
+            } catch(e) { alert("Error"); }
+        }
+
+        function animateValue(id, end) {
+            const obj = document.getElementById(id);
+            obj.innerText = end; // Simple set for now, can add rolling number animation later
+        }
+
+        function logout() {
+            localStorage.removeItem('user_role');
+            window.location.href = 'admin_login.html';
+        }
+    </script>
+</body>
+</html>
