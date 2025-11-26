@@ -23,6 +23,10 @@ function injectUiElements() {
         isDanger: true, // Makes the button red
         btnText: 'Log Out'
     }, () => {
+            // Notify server so session can be cleared server-side as well
+            try {
+                fetch('api/logout.php', { method: 'POST' }).catch(() => {});
+            } catch (e) {}
         // 1. Clear Local Storage
         localStorage.removeItem('current_username');
         localStorage.removeItem('user_role');
@@ -34,6 +38,8 @@ function injectUiElements() {
         window.location.href = 'index.html'; // or login.html
     });
 }
+        // Expose ui logout helper so other scripts can call the same confirm flow
+        window.uiLogout = logout;
     // 2. Create Global Modal if not exists
     if (!document.getElementById('global-modal')) {
         const modalHtml = `
