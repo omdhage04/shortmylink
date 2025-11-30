@@ -1,0 +1,102 @@
+<?php
+// 1. Get Code from URL Parameter
+$code = $_GET['c'] ?? '';
+
+if (empty($code)) {
+    die("Invalid Link.");
+}
+
+// 2. Fetch Real URL from Database
+require_once 'api/db_connect.php';
+
+$stmt = $pdo->prepare("SELECT id, original_url, user_id FROM links WHERE short_code = ?");
+$stmt->execute([$code]);
+$link = $stmt->fetch();
+
+if (!$link) {
+    die("Link not found or has been deleted.");
+}
+
+$destination = $link['original_url'];
+$linkId = $link['id'];
+$ownerId = $link['user_id'];
+?>
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Link Check | ShortMyLink</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0a0a0a; color: white; font-family: sans-serif; display: flex; flex-col; align-items: center; min-height: 100vh; }
+        .ad-space { width: 300px; height: 250px; background: #222; display: flex; align-items: center; justify-content: center; margin: 20px; color: #555; border: 1px dashed #444; }
+        .timer-box { background: #111; border: 1px solid #333; padding: 2rem; border-radius: 1rem; text-align: center; max-width: 400px; width: 90%; }
+        .btn-get-link { background: #10b981; color: white; padding: 12px 30px; border-radius: 8px; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 10px; cursor: pointer; }
+        .btn-disabled { background: #333; color: #777; cursor: not-allowed; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+
+    <!-- TOP AD -->
+    <div class="ad-space">ADVERTISEMENT (728x90)</div>
+
+    <div class="timer-box">
+        <div class="mb-4">
+            <i class="fa-solid fa-shield-halved text-4xl text-green-500 mb-4"></i>
+            <h1 class="text-xl font-bold">Scanning Destination...</h1>
+            <p class="text-gray-400 text-sm mt-2">Please wait while we verify the link is safe.</p>
+        </div>
+
+        <div id="timer-container" class="text-4xl font-mono font-bold text-green-500 my-6">15</div>
+
+        <button id="continue-btn" class="btn-get-link btn-disabled" disabled>Please Wait...</button>
+    </div>
+
+    <!-- BOTTOM AD -->
+    <div class="ad-space">ADVERTISEMENT (300x250)</div>
+
+    <script>
+        const destination = "<?php echo $destination; ?>";
+        const linkId = <?php echo $linkId; ?>;
+        const ownerId = <?php echo $ownerId; ?>;
+        let timeLeft = 15; // 15 Seconds
+        
+        const timerDisplay = document.getElementById('timer-container');
+        const btn = document.getElementById('continue-btn');
+
+        // 1. COUNTDOWN
+        const interval = setInterval(() => {
+            timeLeft--;
+            timerDisplay.innerText = timeLeft;
+            
+            if(timeLeft <= 0) {
+                clearInterval(interval);
+                enableButton();
+                recordView(); // Count money when timer ends
+            }
+        }, 1000);
+
+        function enableButton() {
+            timerDisplay.style.display = 'none';
+            btn.innerText = "Get Link";
+            btn.classList.remove('btn-disabled');
+            btn.disabled = false;
+            btn.onclick = () => window.location.href = destination;
+        }
+
+        // 2. MONETIZATION LOGIC (Background API Call)
+        function recordView() {
+            fetch('api/track_view.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    link_id: linkId,
+                    user_id: ownerId // The link owner gets paid
+                })
+            }).then(res => console.log("View Recorded"));
+        }
+    </script>
+</body>
+</html>

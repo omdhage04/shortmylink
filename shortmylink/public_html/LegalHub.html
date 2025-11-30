@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Hub | ShortMyLink.in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- GLOBAL STYLES --- */
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        #smooth-content { will-change: transform; transform-origin: center top; overflow: hidden; }
+
+        /* HEAVENLY TRANSITION CSS */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* DARK MODE VARIANTS */
+        .dark body { background-color: #050505; color: #e5e5e5; }
+
+        /* LEGAL CONTENT TYPOGRAPHY */
+        .legal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #064e3b; /* dark emerald */
+        }
+        .dark .legal-content h2 { color: #34d399; } /* bright emerald */
+
+        .legal-content h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+        .dark .legal-content h3 { color: #e5e5e5; }
+
+        .legal-content p, .legal-content li {
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            color: #4b5563;
+        }
+        .dark .legal-content p, .dark .legal-content li { color: #9ca3af; }
+
+        .legal-content ul { list-style-type: disc; padding-left: 1.5rem; }
+
+        /* TAB ACTIVE STATE */
+        .tab-active {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        .dark .tab-active {
+            background-color: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        /* COOKIE BANNER */
+        .cookie-banner {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 400: '#34d399',
+                            500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46',
+                            900: '#064e3b', 950: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-neutral-50 text-neutral-800 antialiased selection:bg-brand-500 selection:text-white dark:bg-[#050505] dark:text-neutral-200 transition-colors duration-300">
+
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/80 dark:bg-black/70 backdrop-blur-xl border-b border-neutral-200 dark:border-white/10 supports-[backdrop-filter]:bg-white/60">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer group" onclick="window.location.href='index.html'">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-800 to-brand-600 flex items-center justify-center text-white shadow-lg shadow-brand-900/20">
+                        <i class="fa-solid fa-link text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-neutral-900 dark:text-white group-hover:text-brand-700 dark:group-hover:text-brand-400 transition-colors">shortmylink<span class="text-brand-600 dark:text-brand-500">.in</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <button id="theme-toggle" class="w-10 h-10 rounded-full bg-neutral-100 dark:bg-white/10 flex items-center justify-center text-neutral-600 dark:text-brand-400 hover:scale-110 transition-all duration-300 focus:outline-none border border-neutral-200 dark:border-white/10">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block"></i>
+                    </button>
+                    <a href="index.html" class="text-sm font-semibold text-neutral-600 dark:text-neutral-400 hover:text-brand-700 dark:hover:text-brand-400 transition-colors">Home</a>
+                    <button id="logout-btn-legal" class="logout-btn hidden items-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/20 hover:bg-red-200 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-lg text-xs font-bold transition-all ml-2">
+                        <i class="fa-solid fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                <div class="md:hidden flex items-center gap-4">
+                     <button id="mobile-theme-toggle" class="text-neutral-600 dark:text-white focus:outline-none">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="smooth-content">
+
+        <section class="relative pt-32 pb-12 bg-neutral-100 dark:bg-[#0a0a0a] border-b border-neutral-200 dark:border-white/5">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-neutral-900 dark:text-white mb-4">Legal Center</h1>
+                <p class="text-neutral-500 dark:text-neutral-400">Last Updated: November 2025</p>
+            </div>
+        </section>
+
+        <section class="py-12 min-h-screen">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex justify-center mb-12 gap-4">
+                    <button onclick="switchTab('terms')" id="tab-terms" class="px-6 py-3 rounded-full font-bold text-sm border border-neutral-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-neutral-50 dark:hover:bg-white/10 transition-all tab-active">
+                        Terms of Service
+                    </button>
+                    <button onclick="switchTab('privacy')" id="tab-privacy" class="px-6 py-3 rounded-full font-bold text-sm border border-neutral-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-neutral-50 dark:hover:bg-white/10 transition-all">
+                        Privacy Policy
+                    </button>
+                </div>
+
+                <div id="content-terms" class="legal-content bg-white dark:bg-[#111] p-8 md:p-12 rounded-2xl border border-neutral-200 dark:border-white/10 shadow-sm">
+                    <h2 class="!mt-0">1. Acceptance of Terms</h2>
+                    <p>By registering for and using ShortMyLink.in ("Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service.</p>
+
+                    <h2>2. Account Eligibility</h2>
+                    <p>You must be at least 18 years old to use this Service. You are responsible for maintaining the security of your account and password. ShortMyLink.in cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.</p>
+
+                    <h2>3. Acceptable Use Policy (AUP)</h2>
+                    <p>We enforce a strict zero-tolerance policy against abuse. You agree <strong>NOT</strong> to shorten links to websites containing:</p>
+                    <ul>
+                        <li>Phishing, malware, trojans, or viruses.</li>
+                        <li>Child Sexual Abuse Material (CSAM) — <em>Violators will be immediately reported to authorities.</em></li>
+                        <li>Terrorist propaganda, hate speech, or harassment.</li>
+                        <li>Bot traffic, faucet scripts, or automated click-generation tools.</li>
+                    </ul>
+                    <p><strong>Note on Adult Content:</strong> Adult content (18+) is permitted strictly in accordance with Indian laws. You must label such links appropriately. We reserve the right to ban any content at our sole discretion.</p>
+
+                    <h2>4. Payments & Inactivity</h2>
+                    <h3>4.1 Payment Thresholds</h3>
+                    <p>Publishers are eligible for payouts once their account balance reaches $5.00. Payments are processed via UPI, Bank Transfer, or PayPal.</p>
+                    
+                    <h3>4.2 Traffic Verification</h3>
+                    <p>We reserve the right to hold payments for up to 30 days to verify traffic quality. Traffic generated by bots, proxies, or VPNs will not be paid.</p>
+
+                    <div class="p-6 my-6 bg-red-50 dark:bg-red-900/10 border-l-4 border-red-500 rounded-r-lg">
+                        <h3 class="!text-red-700 dark:!text-red-400 !mt-0">4.3 Account Dormancy & Dead Account Policy</h3>
+                        <p class="!text-red-800 dark:!text-red-300">To maintain system efficiency, we enforce a two-tier inactivity policy based on your login history:</p>
+                        
+                        <ul class="!text-red-800 dark:!text-red-300">
+                            <li><strong>Tier 1: The "One-Time User" (6 Months)</strong><br>
+                            If your account is inactive (not logged in) for more than <strong>6 months</strong>, your pending balance will be forfeited. Your account remains accessible, and your shortened links will remain <strong>live and functioning</strong>.</li>
+                            
+                            <li class="mt-4"><strong>Tier 2: The "Dead Account" (1 Year)</strong><br>
+                            If your account is inactive for more than <strong>1 year</strong>, it will be classified as a "Dead Account". 
+                            <ul class="list-disc pl-5 mt-2">
+                                <li>Any remaining wallet balance is permanently forfeited.</li>
+                                <li><strong>Your links will remain LIVE</strong> (we do not break your links).</li>
+                                <li>Your account will be locked. To use the service again, you must undergo <strong>Reactivation Verification</strong> by contacting support.</li>
+                            </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h2>5. Termination</h2>
+                    <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+                </div>
+
+                <div id="content-privacy" class="legal-content bg-white dark:bg-[#111] p-8 md:p-12 rounded-2xl border border-neutral-200 dark:border-white/10 shadow-sm hidden">
+                    <h2 class="!mt-0">1. Data Fiduciary</h2>
+                    <p>Under the Digital Personal Data Protection Act, 2023 (DPDP Act), ShortMyLink.in operates as a Data Fiduciary. By using our service, you consent to the collection and processing of your data as described below.</p>
+
+                    <h2>2. Information We Collect</h2>
+                    <ul>
+                        <li><strong>Publisher Data:</strong> Name, Email address, Payment details (UPI/Bank), and hashed passwords.</li>
+                        <li><strong>Visitor Data:</strong> IP address, Browser type (User-Agent), Operating System, and Referring URL.</li>
+                    </ul>
+
+                    <h2>3. Third-Party Advertising & Cookies</h2>
+                    <p>We use third-party advertising partners, including but not limited to <strong>Adsterra</strong>, to serve ads when you visit our shortened links. These companies may use cookies to collect non-personal information to provide advertisements about goods and services of interest to you.</p>
+
+                    <h2>4. Data Storage & Security</h2>
+                    <p>We implement industry-standard security measures including SSL encryption and database hashing. We do not store full credit card numbers on our servers.</p>
+
+                    <h2>5. User Rights (India & GDPR)</h2>
+                    <p>You have the right to:</p>
+                    <ul>
+                        <li>Access a copy of your personal data.</li>
+                        <li>Request correction of your payment details.</li>
+                        <li>Request erasure of your account (subject to fraud checks).</li>
+                    </ul>
+
+                    <h2>6. Grievance Redressal</h2>
+                    <p>For any privacy concerns or to exercise your rights, please contact our Grievance Officer at <strong>support@shortmylink.in</strong>.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="bg-black text-neutral-400 py-12 border-t border-neutral-800 text-center">
+            <p class="text-sm">&copy; 2024 ShortMyLink.in. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <div id="cookie-banner" class="fixed bottom-0 w-full bg-white dark:bg-[#151515] border-t border-neutral-200 dark:border-white/10 p-4 md:p-6 z-50 cookie-banner shadow-2xl">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-neutral-600 dark:text-neutral-400">
+                <i class="fa-solid fa-cookie-bite text-brand-600 mr-2"></i>
+                We use cookies and third-party ad partners (Adsterra) to optimize your experience. By continuing, you agree to our <a href="deploy_loader.html" onclick="switchTab('privacy')" class="text-brand-600 underline">Privacy Policy</a>.
+            </div>
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('cookie-banner').style.display='none'" class="px-4 py-2 text-xs font-bold text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">Decline</button>
+                <button onclick="document.getElementById('cookie-banner').style.display='none'" class="px-6 py-2 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors shadow-lg shadow-brand-500/20">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script> 
+    <script>
+        // Tab Switching Logic
+        function switchTab(tab) {
+            // Reset Buttons
+            document.getElementById('tab-terms').classList.remove('tab-active');
+            document.getElementById('tab-privacy').classList.remove('tab-active');
+            
+            // Hide Content
+            document.getElementById('content-terms').classList.add('hidden');
+            document.getElementById('content-privacy').classList.add('hidden');
+
+            // Activate Selected
+            document.getElementById('tab-' + tab).classList.add('tab-active');
+            document.getElementById('content-' + tab).classList.remove('hidden');
+            
+            // Scroll to top of content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- CHECK IF LOGGED IN ---
+        const currentUsername = localStorage.getItem('current_username');
+        const logoutBtn = document.getElementById('logout-btn-legal');
+        
+        if(currentUsername && logoutBtn) {
+            logoutBtn.classList.remove('hidden');
+            logoutBtn.classList.add('flex');
+        }
+        
+        // --- LOGOUT HANDLER ---
+        if(logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                if(confirm('Are you sure you want to logout?')) {
+                    fetch('api/logout.php', { method: 'POST' })
+                        .then(() => {
+                            localStorage.removeItem('current_username');
+                            localStorage.removeItem('user_role');
+                            localStorage.removeItem('api_token');
+                            window.location.href = 'login.html';
+                        })
+                        .catch(err => {
+                            console.error('Logout error:', err);
+                            localStorage.removeItem('current_username');
+                            localStorage.removeItem('user_role');
+                            localStorage.removeItem('api_token');
+                            window.location.href = 'login.html';
+                        });
+                }
+            });
+        }
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const mobileThemeToggleBtn = document.getElementById('mobile-theme-toggle');
+            
+        function toggleTheme(event) {
+            if (!document.startViewTransition) {
+                document.documentElement.classList.toggle('dark');
+                return;
+            }
+            const x = event.clientX;
+            const y = event.clientY;
+            const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+            const transition = document.startViewTransition(() => {
+                document.documentElement.classList.toggle('dark');
+            });
+
+            transition.ready.then(() => {
+                document.documentElement.animate(
+                    { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`] },
+                    { duration: 600, easing: 'ease-out', pseudoElement: '::view-transition-new(root)' }
+                );
+            });
+        }
+
+        if(themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
+        if(mobileThemeToggleBtn) mobileThemeToggleBtn.addEventListener('click', toggleTheme);
+
+        // Lenis Smooth Scroll
+        if (typeof Lenis !== 'undefined') {
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                direction: 'vertical', smooth: true, mouseMultiplier: 1
+            });
+            function raf(time) { lenis.raf(time * 1000); }
+            requestAnimationFrame(raf);
+        }
+    </script>
+</body>
+</html>
